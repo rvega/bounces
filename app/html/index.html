@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+   <meta charset="utf-8" />
+   <meta name="format-detection" content="telephone=no" />
+   <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+
+   <title>Sound Space</title>
+
+   <link rel="stylesheet" href="styles/styles.css" type="text/css" media="all" />
+
+   <script src="scripts/dancing-bone-machine/dancing-bone-machine.js" type="text/javascript" charset="utf-8"></script>
+   <script src="vendors/jquery/jquery.js" type="text/javascript" charset="utf-8"></script>
+   <script src="vendors/numericjs/lib/numeric-1.2.6.js" type="text/javascript" charset="utf-8"></script>
+   <script src="vendors/fabric/dist/all.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+   <h2>Stage Space</h2>
+   <canvas id="canvas-stage"></canvas>
+
+   <h2>Ambisonics Space</h2>
+   <canvas id="canvas-ambisonics"></canvas>
+
+   <script type="text/javascript" charset="utf-8">
+      function main(){
+         require(['scripts/AppController'],function(AppController){
+            appController = new AppController(); 
+
+            // document.addEventListener("HIHI",function(e){
+            //    console.log("a");   
+            // });
+            // document.addEventListener("HIHI",function(e){
+            //    console.log("b");   
+            // });
+            // var e = new CustomEvent("HIHI");
+            // document.dispatchEvent(e);
+         });
+
+         
+         // Init PureData engine and load synth.pd patch.
+         // PD.configurePlayback(44100, 2, false, false, function(){
+         //    PD.openFile('pd/patches', 'patch.pd', function(){
+         //       PD.setActive(true);
+         //       PD.sendFloat(0, 'volume');
+         //    });
+         // });
+
+       };
+   </script>
+</body>
+</html>
