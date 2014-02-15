@@ -5,31 +5,55 @@ define(['./Listener', './Source'], function(Listener, Source){
 
       this.initStages();
       this.initListener();
-      this.initSources();
+      this.initPD(function(){
+         this.initSources();
+      }.bind(this));
+   };
+
+   AppController.prototype.initPD = function(callback){
+      // Init PureData engine and load synth.pd patch.
+      PD.configurePlayback(44100, 2, false, false, function(){
+         PD.openFile('pd/patches', 'amb.pd', function(){
+            PD.setActive(true);
+            callback();
+         });
+      });
    };
 
    AppController.prototype.initSources = function(){
       this.sources = [];   
 
       this.sources.push(new Source({
+         id: 0,
          x: 10,
-         y: 60,
+         y: 10,
          canvasStage: this.stage,
          canvasAmbisonics: this.ambisonics,
          parentController: this
       }));
 
       this.sources.push(new Source({
-         x: 60,
-         y: 60,
+         id: 1,
+         x: 240,
+         y: 10,
          canvasStage: this.stage,
          canvasAmbisonics: this.ambisonics,
          parentController: this
       }));
 
       this.sources.push(new Source({
-         x: 35,
-         y: 80,
+         id: 2,
+         x: 10,
+         y: 240,
+         canvasStage: this.stage,
+         canvasAmbisonics: this.ambisonics,
+         parentController: this
+      }));
+
+      this.sources.push(new Source({
+         id: 3,
+         x: 240,
+         y: 240,
          canvasStage: this.stage,
          canvasAmbisonics: this.ambisonics,
          parentController: this
@@ -56,7 +80,6 @@ define(['./Listener', './Source'], function(Listener, Source){
       this.ambisonics = new fabric.StaticCanvas('canvas-ambisonics',{
          backgroundColor: '#AAA'
       });
-
    };
    
    return AppController;

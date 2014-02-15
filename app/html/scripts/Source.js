@@ -6,6 +6,7 @@ define(function(){
    var Source = function(params){
       var p = params || {};
 
+      this.id = p.id;
       this.parentController = p.parentController;
       this.canvasStage = p.canvasStage;
       this.canvasAmbisonics = p.canvasAmbisonics;
@@ -90,6 +91,18 @@ define(function(){
 
       this.viewAmbisonics.set({left:point[0][0], top:point[1][0]});
       this.canvasAmbisonics.renderAll();
+      this.notifyPD(point[0][0], point[1][0]);
+   };
+
+   Source.prototype.notifyPD = function(x, y){
+      // PD ambisonics library uses coordinates in [-1, 1] 
+      var newX = (8*x / this.canvasAmbisonics.getWidth())-4;
+      var newY = (-8*y / this.canvasAmbisonics.getHeight())+4;
+
+      var message = this.id + " car " + newX + " " + newY;
+      message = message.split(' ');
+      // var message = "sourc2323";
+      PD.sendList(message, 'from-gui');
    };
 
    return Source;
