@@ -1,3 +1,6 @@
 [submodule "dbm"]
 	path = dbm
 	url = https://github.com/dancing-bone-machine/dancing-bone-machine
+[submodule "app/html/vendors/oss"]
+	path = app/html/vendors/oss
+	url = http://git.outerspacesounds.com/js-library.git

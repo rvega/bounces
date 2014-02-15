@@ -8,18 +8,40 @@
    <title>Sound Space</title>
 
    <link rel="stylesheet" href="styles/styles.css" type="text/css" media="all" />
+   <link rel="stylesheet" href="vendors/oss/slider/slider.css" type="text/css" media="all" />
+   <link rel="stylesheet" href="vendors/oss/knob/knob.css" type="text/css" media="all" />
 
-   <script src="scripts/dancing-bone-machine/dancing-bone-machine.js" type="text/javascript" charset="utf-8"></script>
    <script src="vendors/jquery/jquery.js" type="text/javascript" charset="utf-8"></script>
    <script src="vendors/numericjs/lib/numeric-1.2.6.js" type="text/javascript" charset="utf-8"></script>
    <script src="vendors/fabric/dist/all.js" type="text/javascript" charset="utf-8"></script>
+   <script src="scripts/dancing-bone-machine/dancing-bone-machine.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body>
-   <h2>Stage Space</h2>
-   <canvas id="canvas-stage"></canvas>
+   <h1>Sound Space</h1>
+   <div id="stage">
+      <canvas id="canvas-stage"></canvas>
+   </div>
 
-   <h2>Ambisonics Space</h2>
-   <canvas id="canvas-ambisonics"></canvas>
+   <div class="controls">
+       <h2>Music Control</h2>
+       <input type="text" id="seek" />
+       <a href="#" id="pause"></a>
+       <a href="#" id="play"></a>
+       <div id="volume"></div>
+   </div>
+
+   <div class="controls">
+       <h2>Space</h2>
+       <label for="">Room Size:</label> <input type="text" id="room-size" />
+   </div>
+
+   <div class="controls">
+       <h2>Reverb</h2>
+   </div>
+
+
+   <!-- <h2>Ambisonics Space</h2> -->
+   <!-- <canvas id="canvas-ambisonics"></canvas> -->
 
    <script type="text/javascript" charset="utf-8">
       function main(){
