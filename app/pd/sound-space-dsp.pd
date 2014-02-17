@@ -1,4 +1,4 @@
-#N canvas 101 112 1017 492 10;
+#N canvas 101 112 1156 539 10;
 #X obj 179 393 hoa.bin_sp_order3 -----------;
 #X obj 179 358 hoa.optim~ 3 @mode [ maxRe ];
 #N canvas 392 183 335 489 files 0;
@@ -381,6 +381,8 @@
 #X obj 179 422 outlet~;
 #X obj 350 424 outlet~;
 #X obj 910 102 inlet mixers;
+#X obj 994 265 hoa.freeverb~;
+#X obj 1033 101 inlet reverb;
 #X connect 0 0 15 0;
 #X connect 0 1 16 0;
 #X connect 1 0 0 0;
@@ -506,3 +508,4 @@
 #X connect 17 0 9 10;
 #X connect 17 0 10 10;
 #X connect 17 0 11 9;
+#X connect 19 0 18 0;

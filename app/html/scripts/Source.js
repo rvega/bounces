@@ -7,51 +7,65 @@ define(function(){
       var p = params || {};
 
       this.id = p.id;
+      this.name = p.name;
       this.parentController = p.parentController;
-      this.canvasStage = p.canvasStage;
-      this.canvasAmbisonics = p.canvasAmbisonics;
+      this.stage = p.stage;
+      // this.canvasAmbisonics = p.canvasAmbisonics;
 
       this.x = p.x || 0;
       this.y = p.y || 0;
 
       this.initView();
-      document.addEventListener('LISTENER_CHANGED', this.redrawInAmbisonicsSpace.bind(this));
+      document.addEventListener('LISTENER_CHANGED', this.calculateAmbisonicsSpacePosition.bind(this));
 
    };
 
    Source.prototype.initView = function(){
-      this.viewStage = new fabric.Circle({
-         radius: 8,
+      this.view = new fabric.Text('X', {
+         fontFamily: 'Arial',
+         fontSize: 14,
+         fontWeight: 'bold',
          left: this.x,
          top: this.y,
          originX: 'center',
          originY: 'center',
          lockScalingX: true,
          lockScalingY: true,
-         fill: '#00A'
+         fill: '#222',
+         hasControls: false,
+         hasRotatingPoint: false,
+         borderColor: '#F00',
+         cornerColor: '#F00',
+         cornerSize: 0
       });
+      this.view.source = this;
+      
       var self = this;
-      this.viewStage.on('moving', function(e){self.modified.call(self, this, e)});
-      this.canvasStage.add(this.viewStage);
+      this.view.on('selected', function(e){self.selected.call(self, this, e)});
+      this.stage.add(this.view);
 
-      this.viewAmbisonics = new fabric.Circle({
-         radius: 8,
-         left: this.x,
-         top: this.y,
-         originX: 'center',
-         originY: 'center',
-         fill: '#00A'
-      });
-      this.canvasAmbisonics.add(this.viewAmbisonics);
+      // this.viewAmbisonics = new fabric.Circle({
+      //    radius: 8,
+      //    left: this.x,
+      //    top: this.y,
+      //    originX: 'center',
+      //    originY: 'center',
+      //    fill: '#00A'
+      // });
+      // this.canvasAmbisonics.add(this.viewAmbisonics);
    };
 
-   Source.prototype.modified = function(object, event){
-      this.y = object.top;
-      this.x = object.left;
-      this.redrawInAmbisonicsSpace(); 
+   Source.prototype.selected = function(object, event){
+      this.parentController.didSelectSource(this);
+   };
+
+   Source.prototype.modified = function(_x, _y){
+      this.y = _x;
+      this.x = _y;
+      this.calculateAmbisonicsSpacePosition();
    };
    
-   Source.prototype.redrawInAmbisonicsSpace = function(e){
+   Source.prototype.calculateAmbisonicsSpacePosition = function(e){
       var listener = this.parentController.listener;
 
       // Three 2D transforms here by means of matrix multiplication (dot product).
@@ -81,28 +95,42 @@ define(function(){
       var sin = Math.sin(angle);
       var t1x = -1*listener.x;
       var t1y = -1*listener.y;
-      var t2x = this.canvasAmbisonics.getCenter().left;
-      var t2y = this.canvasAmbisonics.getCenter().top;
+      var t2x = this.stage.getCenter().left;
+      var t2y = this.stage.getCenter().top;
+      // var t2x = this.canvasAmbisonics.getCenter().left;
+      // var t2y = this.canvasAmbisonics.getCenter().top;
 
       var transform = [[cos, sin, cos*t1x + sin*t1y + t2x],
                        [-sin, cos, -sin*t1x + cos*t1y + t2y],
                        [0, 0, 1]];
       point = numeric.dot(transform, point);
 
-      this.viewAmbisonics.set({left:point[0][0], top:point[1][0]});
-      this.canvasAmbisonics.renderAll();
+      // this.viewAmbisonics.set({left:point[0][0], top:point[1][0]});
+      // this.canvasAmbisonics.renderAll();
       this.notifyPD(point[0][0], point[1][0]);
    };
 
    Source.prototype.notifyPD = function(x, y){
       // PD ambisonics library uses coordinates in [-1, 1] 
-      var newX = (8*x / this.canvasAmbisonics.getWidth())-4;
-      var newY = (-8*y / this.canvasAmbisonics.getHeight())+4;
+      var roomSize = this.parentController.roomSize;
+      var newX = (2*roomSize*x / this.stage.getWidth())-(roomSize);
+      var newY = (-2*roomSize*y / this.stage.getHeight())+(roomSize);
+      // var newX = (8*x / this.canvasAmbisonics.getWidth())-4;
+      // var newY = (-8*y / this.canvasAmbisonics.getHeight())+4;
 
       var message = this.id + " car " + newX + " " + newY;
       message = message.split(' ');
-      // var message = "sourc2323";
-      PD.sendList(message, 'from-gui');
+      console.log(message);
+      // PD.sendList(message, 'from-gui');
+   };
+
+   Source.prototype.update = function(){
+      this.view.set({
+         left: this.x,
+         top: this.y
+      })
+      this.view.setCoords();
+      this.calculateAmbisonicsSpacePosition();
    };
 
    return Source;

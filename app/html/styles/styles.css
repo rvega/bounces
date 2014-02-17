@@ -14,20 +14,22 @@ h1{
 }
 
 h2{
-   margin:0px 0px 5px 0px;
+   margin:0px 0px 10px 0px;
    font-size: 16px;
 }
 
-#stage{
+#stage-container{
    float:left;
+   border: 2px solid black;
 }
 
 .controls{
+   background-color: #EEE;
    float:left;
    border: 2px solid black;   
    width: 280px;
-   height: 80px;
-   padding: 10px;
+   height: 90px;
+   padding: 5px 10px 0 10px;
    margin: 0px 0px 10px 10px;
 }
 
@@ -50,9 +52,10 @@ h2{
 
 #volume{
    display: inline-block;
-   margin-bottom:-3px;
+   margin-bottom:-6px;
 }
-#volume .value{
+
+.knob .value{
    display: none;
 }
 
@@ -60,7 +63,71 @@ h2{
    width: 260px;
 }
 
-.controls .slider{
+.music.controls .slider{
    margin-left: 10px;
 }
    
+.space.controls{
+   height: 70px;
+}
+
+#room-size{
+   width: 260px;
+}
+
+.reverb .knob{
+   float:left;
+   margin-right: 1px;
+}
+
+input[type=text]{
+   width: 190px;
+}
+
+#selected-source{
+   display:none;
+}
+
+#buttons{
+   float:left;
+   margin: 0px 0px 10px 10px;
+}
+
+button:hover, button:focus, button:active{
+   color: #333;
+   background-color: #ebebeb;
+   border-color: #adadad;
+}
+
+button:hover, button:focus {
+   color: #333;
+   text-decoration: none;
+}
+
+button {
+   color: #333;
+   background-color: #fff;
+   border-color: #ccc;
+}
+
+button {
+   display: inline-block;
+   margin-bottom: 0;
+   font-weight: 400;
+   text-align: center;
+   vertical-align: middle;
+   cursor: pointer;
+   background-image: none;
+   border: 1px solid transparent;
+   white-space: nowrap;
+   padding: 6px 12px;
+   font-size: 14px;
+   line-height: 1.42857143;
+   border-radius: 4px;
+   border-color: #000;
+   user-select: none;
+}
+
+#load-file{
+   display:none;
+}

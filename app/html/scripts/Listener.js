@@ -7,8 +7,8 @@ define(function(){
       var p = params || {};
 
       this.parentController = p.parentController;
-      this.canvasStage = p.canvasStage;
-      this.canvasAmbisonics = p.canvasAmbisonics;
+      this.stage = p.stage;
+      // this.canvasAmbisonics = p.canvasAmbisonics;
 
       this.x = p.x || 0;
       this.y = p.y || 0;
@@ -18,30 +18,37 @@ define(function(){
    };
 
    Listener.prototype.initView = function(){
-      this.viewStage = new fabric.Circle({
-         radius: 8,
+      this.view = new fabric.Triangle({
+         width: 20,
+         height: 25,
          left: this.x,
          top: this.y,
          originX: 'center',
          originY: 'center',
          lockScalingX: true,
-         lockScalingY: true
+         lockScalingY: true,
+         hasControls: false,
+         borderColor: '#F00',
+         cornerColor: '#F00',
+         fill: '#1b571a',
+         cornerSize: 8
       });
       var self=this;
-      this.viewStage.on('moving', function(e){self.modified.call(self, this, e)});
-      this.viewStage.on('rotating', function(e){self.modified.call(self, this, e)});
-      this.canvasStage.add(this.viewStage);
+      this.view.on('moving', function(e){self.modified.call(self, this, e)});
+      this.view.on('rotating', function(e){self.modified.call(self, this, e)});
+      this.view.on('selected', function(e){self.selected.call(self, this, e)});
+      this.stage.add(this.view);
 
-      this.viewAmbisonics = new fabric.Circle({
-         radius: 8,
-         left: this.x,
-         top: this.y,
-         originX: 'center',
-         originY: 'center',
-         lockScalingX: true,
-         lockScalingY: true
-      });
-      this.canvasAmbisonics.add(this.viewAmbisonics);
+      // this.viewAmbisonics = new fabric.Circle({
+      //    radius: 8,
+      //    left: this.x,
+      //    top: this.y,
+      //    originX: 'center',
+      //    originY: 'center',
+      //    lockScalingX: true,
+      //    lockScalingY: true
+      // });
+      // this.canvasAmbisonics.add(this.viewAmbisonics);
    };
 
    Listener.prototype.modified = function(object, event){
@@ -52,6 +59,10 @@ define(function(){
          'detail':this
       });
       document.dispatchEvent(e);
+   };
+
+   Listener.prototype.selected = function(object, event){
+      this.parentController.didSelectSource(null);
    };
    
    return Listener;
