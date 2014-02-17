@@ -1,7 +1,7 @@
-#N canvas 101 112 1156 539 10;
-#X obj 179 393 hoa.bin_sp_order3 -----------;
-#X obj 179 358 hoa.optim~ 3 @mode [ maxRe ];
-#N canvas 392 183 335 489 files 0;
+#N canvas 1 22 1233 538 10;
+#X obj 249 393 hoa.bin_sp_order3 -----------;
+#X obj 249 358 hoa.optim~ 3 @mode [ maxRe ];
+#N canvas 516 104 395 459 files 0;
 #X obj -444 -927 outlet~;
 #X obj -438 -887 outlet~;
 #X obj -432 -846 outlet~;
@@ -23,6 +23,7 @@
 #X obj -407 -661 file waves/08.ogg;
 #X obj -401 -619 file waves/09.ogg;
 #X obj -397 -577 file waves/10.ogg;
+#X obj -256 -879 outlet playhead;
 #X connect 10 0 11 0;
 #X connect 10 0 12 0;
 #X connect 10 0 13 0;
@@ -34,6 +35,7 @@
 #X connect 10 0 19 0;
 #X connect 10 0 20 0;
 #X connect 11 0 0 0;
+#X connect 11 1 21 0;
 #X connect 12 0 1 0;
 #X connect 13 0 2 0;
 #X connect 14 0 3 0;
@@ -43,7 +45,7 @@
 #X connect 18 0 7 0;
 #X connect 19 0 8 0;
 #X connect 20 0 9 0;
-#X restore 179 101 pd files 1 9 -------;
+#X restore 179 51 pd files 1 9 -------;
 #N canvas 166 149 314 430 files 0;
 #X obj -444 -927 outlet~;
 #X obj -438 -887 outlet~;
@@ -86,7 +88,7 @@
 #X connect 18 0 7 0;
 #X connect 19 0 8 0;
 #X connect 20 0 9 0;
-#X restore 319 101 pd files 10 19 ---;
+#X restore 399 51 pd files 10 19 ---;
 #N canvas 166 149 323 453 files 0;
 #X obj -444 -927 outlet~;
 #X obj -438 -887 outlet~;
@@ -129,7 +131,7 @@
 #X connect 18 0 7 0;
 #X connect 19 0 8 0;
 #X connect 20 0 9 0;
-#X restore 450 101 pd files 21 30 ---;
+#X restore 530 51 pd files 21 30 ---;
 #N canvas 166 149 340 470 files 0;
 #X obj -444 -927 outlet~;
 #X obj -438 -887 outlet~;
@@ -172,7 +174,7 @@
 #X connect 18 0 7 0;
 #X connect 19 0 8 0;
 #X connect 20 0 9 0;
-#X restore 580 101 pd files 31 40 ---;
+#X restore 660 51 pd files 31 40 ---;
 #N canvas 190 132 314 430 files 0;
 #X obj -444 -927 outlet~;
 #X obj -438 -887 outlet~;
@@ -211,7 +213,7 @@
 #X connect 16 0 6 0;
 #X connect 17 0 7 0;
 #X connect 18 0 8 0;
-#X restore 710 101 pd files 41 50 ---;
+#X restore 790 51 pd files 41 50 ---;
 #N canvas 640 380 450 300 mixer 0;
 #X obj 11 12 inlet~;
 #X obj 11 36 outlet~;
@@ -244,7 +246,7 @@
 #X connect 14 0 15 0;
 #X connect 16 0 17 0;
 #X connect 18 0 19 0;
-#X restore 179 151 pd mixer 1 -----------;
+#X restore 176 151 pd mixer 1 -----------;
 #N canvas 640 380 450 300 mixer 0;
 #X obj 11 12 inlet~;
 #X obj 11 36 outlet~;
@@ -277,7 +279,7 @@
 #X connect 14 0 15 0;
 #X connect 16 0 17 0;
 #X connect 18 0 19 0;
-#X restore 319 151 pd mixer 1 ---------;
+#X restore 399 151 pd mixer 1 ---------;
 #N canvas 640 380 450 300 mixer 0;
 #X obj 11 12 inlet~;
 #X obj 11 36 outlet~;
@@ -310,7 +312,7 @@
 #X connect 14 0 15 0;
 #X connect 16 0 17 0;
 #X connect 18 0 19 0;
-#X restore 450 151 pd mixer 2 ---------;
+#X restore 530 151 pd mixer 2 ---------;
 #N canvas 640 380 450 300 mixer 0;
 #X obj 11 12 inlet~;
 #X obj 11 36 outlet~;
@@ -343,7 +345,7 @@
 #X connect 14 0 15 0;
 #X connect 16 0 17 0;
 #X connect 18 0 19 0;
-#X restore 580 151 pd mixer 3 ---------;
+#X restore 660 151 pd mixer 3 ---------;
 #N canvas 640 380 450 300 mixer 0;
 #X obj 11 12 inlet~;
 #X obj 11 36 outlet~;
@@ -373,16 +375,40 @@
 #X connect 12 0 13 0;
 #X connect 14 0 15 0;
 #X connect 16 0 17 0;
-#X restore 710 151 pd mixer 4 ---------;
-#X obj 179 297 hoa.map~ 3 49 ------------------------------------------------------------
+#X restore 790 151 pd mixer 4 ---------;
+#X obj 249 297 hoa.map~ 3 49 ------------------------------------------------------------
 ;
-#X obj 179 63 inlet files;
+#X obj 179 13 inlet files;
 #X obj 32 64 inlet ambisonics;
-#X obj 179 422 outlet~;
-#X obj 350 424 outlet~;
-#X obj 910 102 inlet mixers;
-#X obj 994 265 hoa.freeverb~;
-#X obj 1033 101 inlet reverb;
+#X obj 249 422 outlet~;
+#X obj 420 424 outlet~;
+#X obj 990 52 inlet mixers;
+#X obj 1074 265 hoa.freeverb~;
+#X obj 1113 51 inlet reverb;
+#N canvas 679 450 450 300 send 1;
+#X obj 95 44 inlet;
+#X obj 104 233 send playhead;
+#X obj 79 93 f;
+#X obj -108 28 loadbang;
+#X obj 78 128 change;
+#X obj 78 152 t b f;
+#X obj 100 206 f;
+#X obj -100 77 metro 1000;
+#X msg -43 29 bang;
+#X obj 8 242 print ph;
+#X obj 39 181 delay 900;
+#X connect 0 0 2 1;
+#X connect 2 0 4 0;
+#X connect 3 0 7 0;
+#X connect 4 0 5 0;
+#X connect 5 0 10 0;
+#X connect 5 1 6 1;
+#X connect 6 0 1 0;
+#X connect 6 0 9 0;
+#X connect 7 0 2 0;
+#X connect 8 0 7 0;
+#X connect 10 0 6 0;
+#X restore 296 83 pd send playhead;
 #X connect 0 0 15 0;
 #X connect 0 1 16 0;
 #X connect 1 0 0 0;
@@ -402,6 +428,7 @@
 #X connect 2 7 7 7;
 #X connect 2 8 7 8;
 #X connect 2 9 7 9;
+#X connect 2 10 20 0;
 #X connect 3 0 8 0;
 #X connect 3 1 8 1;
 #X connect 3 2 8 2;

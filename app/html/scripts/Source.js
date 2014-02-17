@@ -60,8 +60,8 @@ define(function(){
    };
 
    Source.prototype.modified = function(_x, _y){
-      this.y = _x;
-      this.x = _y;
+      this.x = _x;
+      this.y = _y;
       this.calculateAmbisonicsSpacePosition();
    };
    
@@ -118,10 +118,10 @@ define(function(){
       // var newX = (8*x / this.canvasAmbisonics.getWidth())-4;
       // var newY = (-8*y / this.canvasAmbisonics.getHeight())+4;
 
-      var message = this.id + " car " + newX + " " + newY;
+      var message = (this.id-1) + " car " + newX + " " + newY;
       message = message.split(' ');
-      console.log(message);
-      // PD.sendList(message, 'from-gui');
+      // console.log(message);
+      PD.sendList(message, 'positions');
    };
 
    Source.prototype.update = function(){

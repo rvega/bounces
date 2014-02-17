@@ -19,8 +19,8 @@ define(function(){
 
    Listener.prototype.initView = function(){
       this.view = new fabric.Triangle({
-         width: 20,
-         height: 25,
+         width: 18,
+         height: 30,
          left: this.x,
          top: this.y,
          originX: 'center',
@@ -64,6 +64,23 @@ define(function(){
    Listener.prototype.selected = function(object, event){
       this.parentController.didSelectSource(null);
    };
+
+   Listener.prototype.update = function(){
+      this.view.set({
+         left: this.x,
+         top: this.y,
+         angle: this.angle
+      });
+
+      var e = new CustomEvent('LISTENER_CHANGED',{
+         'detail':this
+      });
+      document.dispatchEvent(e);
+
+      this.view.setCoords();
+      this.stage.renderAll();
+   };
+
    
    return Listener;
 });

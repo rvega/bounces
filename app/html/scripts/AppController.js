@@ -4,11 +4,12 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
       this.stageHeight = 600;
 
       this.initStage();
-      this.initUIControls();
-      // this.initPD(function(){
+      this.initArrowKeys();
+      this.initPD(function(){
+         this.initUIControls();
          this.initSources();
          this.initLoadSave();
-      // }.bind(this));
+      }.bind(this));
    };
 
    ///////////////////////////////////////////////////////////////////////////////// 
@@ -17,7 +18,7 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
    AppController.prototype.initPD = function(callback){
       // Init PureData engine and load synth.pd patch.
       PD.configurePlayback(44100, 2, false, false, function(){
-         PD.openFile('pd/patches', 'amb.pd', function(){
+         PD.openFile('pd/patches', 'sound-space-no-gui.pd', function(){
             PD.setActive(true);
             callback();
          });
@@ -132,13 +133,20 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
          max: 1,
          value: 0,
          tooltip: 'hide'
-      });
+      }).on('slide', this.seek.bind(this));
 
+      PD.bind('playhead', this.playhead.bind(this));
+      $('#play').on('click', this.play.bind(this));
+      $('#pause').on('click', this.pause.bind(this));
+
+      this.volume = 0.6;
+      PD.sendFloat(0.6, 'volume');
       this.UIElements['volume'] = new Knob({
          domElementId: 'volume',
          changingCallback: function(value, normalizedValue){
-            console.log('vol');
-         },
+            this.volume = value;
+            PD.sendFloat(value, 'volume');
+         }.bind(this),
          value: 0.6,
          pow: 1,
          minValue: 0,
@@ -244,11 +252,41 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
       var value = $(e.currentTarget).slider('getValue');
       this.roomSize = value;
 
+      this.listener.update();
+
       this.roomSizeCircles[0].setRadius( this.stageWidth/2/this.roomSize );
       this.roomSizeCircles[1].setRadius( this.stageWidth/2/this.roomSize * 0.75 );
       this.roomSizeCircles[2].setRadius( this.stageWidth/2/this.roomSize * 0.5 );
          
       this.stage.renderAll();
+   };
+
+   AppController.prototype.play = function(e){
+      PD.sendList(['start'], 'play');
+   };
+
+   AppController.prototype.pause = function(e){
+      PD.sendList(['stop'], 'play');
+   };
+
+   AppController.prototype.seek = function(e){
+      console.log('seek');
+      var value = Number($(e.currentTarget).slider('getValue')) * 600;
+      var vol = this.volume;
+      PD.sendFloat(0, 'volume');
+      // PD.sendList(['stop'], 'play');
+      setTimeout(function(){
+         PD.sendList(['seek', String(value)], 'play');
+      },300);
+      setTimeout(function(){
+         PD.sendFloat(vol, 'volume');
+         // PD.sendList(['resume'], 'play');
+      },600);
+   };
+
+   AppController.prototype.playhead = function(msg){
+      val = Number(msg)/600;
+      $('#seek').slider('setValue', val);
    };
    
    ///////////////////////////////////////////////////////////////////////////////// 
@@ -400,6 +438,8 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
 
    AppController.prototype.setParametersFromPreset = function(data) {
       this.UIElements['volume'].setValue(data['volume']);
+      this.volume = data['volume'];
+
       this.UIElements['reverb-wet'].setValue(data['reverb-wet']);
       this.UIElements['reverb-dry'].setValue(data['reverb-dry']);
       this.UIElements['reverb-damping'].setValue(data['reverb-damping']);
@@ -415,7 +455,6 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
 
       for(var i in data['sources']){
          var sourceData = data['sources'][i];
-         debugger;
          var source = this.sources[Number(i)-1];
          source.x = sourceData['x'] * this.stageWidth;
          source.y = sourceData['y'] * this.stageHeight;
@@ -425,6 +464,46 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
       }
 
       this.stage.renderAll();
+   };
+
+   /////////////////////////////////////////////////////////////////////////////////
+   // Arrow keys
+   AppController.prototype.initArrowKeys = function(){
+      $(document).on('keydown', this.keydown.bind(this));
+   };
+
+   AppController.prototype.keydown = function(e){
+      var Q = 81;
+      var W = 87;
+      var E = 69;
+      var A = 65;
+      var S = 83;
+      var D = 68 ;
+
+      if(e.which==Q){
+         this.listener.angle -= 5;
+         this.listener.update();
+      }
+      else if(e.which==E){
+         this.listener.angle += 5; 
+         this.listener.update();
+      }
+      else if(e.which==W){
+         this.listener.y -= 5;
+         this.listener.update();
+      }
+      else if(e.which==S){
+         this.listener.y += 5;
+         this.listener.update();
+      }
+      else if(e.which==A){
+         this.listener.x -= 5;
+         this.listener.update();
+      }
+      else if(e.which==D){
+         this.listener.x += 5;
+         this.listener.update();
+      }
    };
 
    return AppController;
