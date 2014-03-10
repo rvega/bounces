@@ -9,6 +9,8 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
          this.initUIControls();
          this.initSources();
          this.initLoadSave();
+         $('#main').show();
+         $('#loading').hide();
       }.bind(this));
    };
 
@@ -18,8 +20,9 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
    AppController.prototype.initPD = function(callback){
       // Init PureData engine and load synth.pd patch.
       PD.configurePlayback(44100, 2, false, false, function(){
-         PD.openFile('pd/patches', 'sound-space-no-gui.pd', function(){
-            PD.setActive(true);
+         // PD.openFile('pd', 'sound-space-no-gui.pd', function(){
+         PD.openFile('pd', 'simple.pd', function(){
+            // PD.setActive(true);
             callback();
          });
       });
@@ -135,17 +138,17 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
          tooltip: 'hide'
       }).on('slide', this.seek.bind(this));
 
-      PD.bind('playhead', this.playhead.bind(this));
+      // PD.bind('playhead', this.playhead.bind(this));
       $('#play').on('click', this.play.bind(this));
       $('#pause').on('click', this.pause.bind(this));
 
       this.volume = 0.6;
-      PD.sendFloat(0.6, 'volume');
+      // PD.sendFloat(0.6, 'volume');
       this.UIElements['volume'] = new Knob({
          domElementId: 'volume',
          changingCallback: function(value, normalizedValue){
             this.volume = value;
-            PD.sendFloat(value, 'volume');
+            // PD.sendFloat(value, 'volume');
          }.bind(this),
          value: 0.6,
          pow: 1,
@@ -262,25 +265,25 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
    };
 
    AppController.prototype.play = function(e){
-      PD.sendList(['start'], 'play');
+      // PD.sendList(['start'], 'play');
    };
 
    AppController.prototype.pause = function(e){
-      PD.sendList(['stop'], 'play');
+      // PD.sendList(['stop'], 'play');
    };
 
    AppController.prototype.seek = function(e){
       console.log('seek');
       var value = Number($(e.currentTarget).slider('getValue')) * 600;
       var vol = this.volume;
-      PD.sendFloat(0, 'volume');
-      // PD.sendList(['stop'], 'play');
+      // PD.sendFloat(0, 'volume');
+      // //PD.sendList(['stop'], 'play');
       setTimeout(function(){
-         PD.sendList(['seek', String(value)], 'play');
+         // PD.sendList(['seek', String(value)], 'play');
       },300);
       setTimeout(function(){
-         PD.sendFloat(vol, 'volume');
-         // PD.sendList(['resume'], 'play');
+         // PD.sendFloat(vol, 'volume');
+         // //PD.sendList(['resume'], 'play');
       },600);
    };
 

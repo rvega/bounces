@@ -1,4 +1,5 @@
 <!DOCTYPE HTML>
+
 <html>
 <head>
    <meta charset="utf-8" />
@@ -17,47 +18,52 @@
    <script src="scripts/dancing-bone-machine/dancing-bone-machine.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body>
-   <h1>Sound Space</h1>
-   <div id="stage-container">
-      <canvas id="stage"></canvas>
+   <div id="loading">
+      Loading...
    </div>
+   <div id="main">
+      <h1>Sound Space</h1>
+      <div id="stage-container">
+         <canvas id="stage"></canvas>
+      </div>
 
-   <div class="music controls">
-       <h2>Music Control</h2>
-       <input type="text" id="seek" />
-       <a href="#" id="pause"></a>
-       <a href="#" id="play"></a>
-       <div class="knob" id="volume"></div>
-   </div>
+      <div class="music controls">
+         <h2>Music Control</h2>
+         <input type="text" id="seek" />
+         <a href="#" id="pause"></a>
+         <a href="#" id="play"></a>
+         <div class="knob" id="volume"></div>
+      </div>
 
-   <div class="space controls">
-       <h2>Space</h2>
-       <label for="">Room Size:</label><br />
-       <input type="text" id="room-size" />
-   </div>
+      <div class="space controls">
+         <h2>Space</h2>
+         <label for="">Room Size:</label><br />
+         <input type="text" id="room-size" />
+      </div>
 
-   <div class="reverb controls">
-       <h2>Reverb</h2>
-       <div class="knob" id="reverb_wet"></div>
-       <div class="knob" id="reverb_dry"></div>
-       <div class="knob" id="reverb_damp"></div>
-       <div class="knob" id="reverb_size"></div>
-       <div class="knob" id="reverb_fspread"></div>
-       <div class="knob" id="reverb_spread"></div>
-   </div>
+      <div class="reverb controls">
+         <h2>Reverb</h2>
+         <div class="knob" id="reverb_wet"></div>
+         <div class="knob" id="reverb_dry"></div>
+         <div class="knob" id="reverb_damp"></div>
+         <div class="knob" id="reverb_size"></div>
+         <div class="knob" id="reverb_fspread"></div>
+         <div class="knob" id="reverb_spread"></div>
+      </div>
 
-   <div id="selected-source" class="controls">
-       <h2>Selected Sound Source</h2>
-       <p>Id:  <span id="selected-source-id"></span> </p>
-       <p>
-          <label for="">Source Name:</label> <input type="text" id="source-name" />
-       </p>
-   </div>
+      <div id="selected-source" class="controls">
+         <h2>Selected Sound Source</h2>
+         <p>Id:  <span id="selected-source-id"></span> </p>
+         <p>
+            <label for="">Source Name:</label> <input type="text" id="source-name" />
+         </p>
+      </div>
 
-   <div id="buttons">
-       <button type="button" id="save-btn">Save</button>
-       <button type="button" id="load-btn">Load</button>
-       <input type="file" id="load-file" />
+      <div id="buttons">
+         <button type="button" id="save-btn">Save</button>
+         <button type="button" id="load-btn">Load</button>
+         <input type="file" id="load-file" />
+      </div>
    </div>
 
    <!-- <h2>Ambisonics Space</h2> -->

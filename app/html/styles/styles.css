@@ -1,11 +1,26 @@
 body {
    margin:0px;
    padding:10px 0 0 10px;
+   -webkit-user-select:none;
 }
 
 body * {
    font-family: Helvetica, Arial, sans-serif;
    font-size:12px;
+   cursor: default;
+}
+
+#main{
+   display:none;
+}
+
+#loading{
+   font-size: 14px;
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   width: 70px;
+   margin-left:-35px;
 }
 
 h1{
@@ -33,7 +48,9 @@ h2{
    margin: 0px 0px 10px 10px;
 }
 
+
 #play{
+   cursor: pointer;
    width: 20px;
    height: 22px;
    display: inline-block;
@@ -42,6 +59,7 @@ h2{
 }
 
 #pause{
+   cursor: pointer;
    width: 20px;
    height: 22px;
    display: inline-block;

@@ -121,7 +121,7 @@ define(function(){
       var message = (this.id-1) + " car " + newX + " " + newY;
       message = message.split(' ');
       // console.log(message);
-      PD.sendList(message, 'positions');
+      // PD.sendList(message, 'positions');
    };
 
    Source.prototype.update = function(){
