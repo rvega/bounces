@@ -5,11 +5,11 @@
 	path = app/html/vendors/oss
 	url = http://git.outerspacesounds.com/js-library.git
 [submodule "app/pd/vendors/hoa/HoaLibrary"]
-	path = app/pd/vendors/hoa/HoaLibrary
+	path = app/vendors/hoa/HoaLibrary
 	url = https://github.com/rvega/HoaLibrary.git
 [submodule "app/pd/vendors/hoa/CicmWrapper"]
-	path = app/pd/vendors/hoa/CicmWrapper
+	path = app/vendors/hoa/CicmWrapper
 	url = https://github.com/rvega/CicmWrapper.git
 [submodule "app/pd/vendors/pd-extended"]
-	path = app/pd/vendors/pd-extended
+	path = app/vendors/pd-extended
 	url = git://git.code.sf.net/p/pure-data/pd-extended
