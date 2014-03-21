@@ -56,9 +56,9 @@
 
 #define     READ                    4096        /* amount of data we pass on to decoder */
 #define     MIN_AUDIO_INPUT 		READ*8      /* this is completely guessed! we just fill half the buffer */
-#define     OUTPUT_BUFFER_SIZE 		65536   	/* audio output buffer: 64k */
+#define     OUTPUT_BUFFER_SIZE 		(4*65536)   	/* audio output buffer: 64k */
 
-static char   *oggread_version = "oggread~: ogg/vorbis file reader version 0.2c, written by Olaf Matthes";
+#define oggread_version "oggread~: ogg/vorbis file reader version 0.2c, written by Olaf Matthes"
 
 /* ------------------------ oggread~ ----------------------------- */
 
@@ -111,7 +111,7 @@ static void oggread_tick(t_oggread *x)
 
 static int oggread_decode_input(t_oggread *x)
 {
-	long ret;		/* bytes per channel returned by decoder */
+	long ret = 0;		/* bytes per channel returned by decoder */
 	int i;
 	float **pcm;
 
@@ -167,8 +167,8 @@ static t_int *oggread_perform(t_int *w)
 	t_float *out1 = (t_float *)(w[2]);
 	t_float *out2 = (t_float *)(w[3]);
 	int n = (int)(w[4]);
-	int ret;
-	int i = 0;
+	/* int ret; */
+	/* int i = 0; */
 
 	x->x_blocksize = n;
 
@@ -228,7 +228,7 @@ static void oggread_start(t_oggread *x)
 		{
 			post("oggread~: could not rewind file to beginning");
 		}
-		post("oggread~: START");
+		/* post("oggread~: START"); */
 		x->x_eos = 0;
 		x->x_outreadposition = 0;
 		x->x_outwriteposition = 0;
@@ -247,7 +247,7 @@ static void oggread_resume(t_oggread *x)
 	{
 		x->x_stream = 1;
 		clock_delay(x->x_clock, 0);
-		post("oggread~: RESUME");
+		/* post("oggread~: RESUME"); */
 	}
 	else post("oggread~: encoder not initialised");
 }
@@ -260,13 +260,13 @@ static void oggread_seek(t_oggread *x, t_floatarg f)
 		{
 			post("oggread~: could not set playing position to %g seconds", f);
 		}
-		else post("oggread~: playing position set to %g seconds", f);
+		/* else post("oggread~: playing position set to %g seconds", f); */
 }
 
     /* stop playing */               
 static void oggread_stop(t_oggread *x)
 {
-	if(x->x_stream)post("oggread~: STOP");
+	/* if(x->x_stream)post("oggread~: STOP"); */
     x->x_stream = 0;
 	clock_unset(x->x_clock);
 }
@@ -287,7 +287,7 @@ static void oggread_open(t_oggread *x, t_symbol *filename)
 	if(x->x_fd > 0)
 	{
 		ov_clear(&x->x_ov);
-		post("oggread~: previous file closed");
+		/* post("oggread~: previous file closed"); */
 	}
 		/* open file for reading */
     if((x->x_file = sys_fopen(filename->s_name, "r")) < 0)
@@ -304,7 +304,7 @@ static void oggread_open(t_oggread *x, t_symbol *filename)
 		x->x_outreadposition = 0;
 		x->x_outwriteposition = 0;
 		x->x_outunread = 0;
-		post("oggread~: file \"%s\" opened", filename->s_name);
+		/* post("oggread~: file \"%s\" opened", filename->s_name); */
 		outlet_float( x->x_out_position, 0);
 
 			/* try to open as ogg vorbis file */
@@ -321,9 +321,9 @@ static void oggread_open(t_oggread *x, t_symbol *filename)
 			/* print details about each logical bitstream in the input */
 		if(ov_seekable(&x->x_ov))
 		{
-			post("oggread~: input bitstream contained %ld logical bitstream section(s)", ov_streams(&x->x_ov));
-			post("oggread~: total bitstream playing time: %ld seconds", (long)ov_time_total(&x->x_ov,-1));
-			post("oggread~: encoded by: %s\n",ov_comment(&x->x_ov,-1)->vendor);
+			/* post("oggread~: input bitstream contained %ld logical bitstream section(s)", ov_streams(&x->x_ov)); */
+			/* post("oggread~: total bitstream playing time: %ld seconds", (long)ov_time_total(&x->x_ov,-1)); */
+			/* post("oggread~: encoded by: %s\n",ov_comment(&x->x_ov,-1)->vendor); */
 		}
 		else
 		{
@@ -334,13 +334,13 @@ static void oggread_open(t_oggread *x, t_symbol *filename)
 		for(i = 0; i < ov_streams(&x->x_ov); i++)
 		{
 			x->x_vi = ov_info(&x->x_ov,i);
-			post("\tlogical bitstream section %d information:",i+1);
-			post("\t\t%ldHz %d channels bitrate %ldkbps serial number=%ld",
-				x->x_vi->rate,x->x_vi->channels,ov_bitrate(&x->x_ov,i)/1000, ov_serialnumber(&x->x_ov,i));
-			post("\t\theader length: %ld bytes",(long)
-			(x->x_ov.dataoffsets[i] - x->x_ov.offsets[i]));
-			post("\t\tcompressed length: %ld bytes",(long)(ov_raw_total(&x->x_ov,i)));
-			post("\t\tplay time: %ld seconds\n",(long)ov_time_total(&x->x_ov,i));
+			/* post("\tlogical bitstream section %d information:",i+1); */
+			/* post("\t\t%ldHz %d channels bitrate %ldkbps serial number=%ld", */
+				/* x->x_vi->rate,x->x_vi->channels,ov_bitrate(&x->x_ov,i)/1000, ov_serialnumber(&x->x_ov,i)); */
+			/* post("\t\theader length: %ld bytes",(long) */
+			/* (x->x_ov.dataoffsets[i] - x->x_ov.offsets[i])); */
+			/* post("\t\tcompressed length: %ld bytes",(long)(ov_raw_total(&x->x_ov,i))); */
+			/* post("\t\tplay time: %ld seconds\n",(long)ov_time_total(&x->x_ov,i)); */
 		}
 
     } 
@@ -358,6 +358,7 @@ static void oggread_free(t_oggread *x)
 	clock_free(x->x_clock);
 }
 
+/* static void *oggread_new(t_floatarg fdographics) */
 static void *oggread_new(t_floatarg fdographics)
 {
     t_oggread *x = NULL;
@@ -393,6 +394,8 @@ static void *oggread_new(t_floatarg fdographics)
     logpost(NULL, 4, oggread_version);
 
     return (x);
+
+    (void)fdographics;
 }
 
 
