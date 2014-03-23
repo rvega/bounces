@@ -115,13 +115,10 @@ define(function(){
       var roomSize = this.parentController.roomSize;
       var newX = (2*roomSize*x / this.stage.getWidth())-(roomSize);
       var newY = (-2*roomSize*y / this.stage.getHeight())+(roomSize);
-      // var newX = (8*x / this.canvasAmbisonics.getWidth())-4;
-      // var newY = (-8*y / this.canvasAmbisonics.getHeight())+4;
 
       var message = (this.id-1) + " car " + newX + " " + newY;
       message = message.split(' ');
-      // console.log(message);
-      // PD.sendList(message, 'positions');
+      PD.sendList(message, 'positions');
    };
 
    Source.prototype.update = function(){

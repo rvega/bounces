@@ -18,10 +18,8 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
    // PureData
 
    AppController.prototype.initPD = function(callback){
-      // Init PureData engine and load synth.pd patch.
+      // Init PureData engine and load patch.
       PD.configurePlayback(44100, 2, false, false, function(){
-         // PD.openFile('pd', 'simple.pd', function(){
-         // PD.openFile('pd', 'simplesimple.pd', function(){
          PD.openFile('pd', 'sound-space-no-gui.pd', function(){
             PD.setActive(true);
             callback();
@@ -37,6 +35,7 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
       this.stage = new fabric.Canvas('stage',{
          backgroundColor: '#EEE'
       });
+      this.stage.selection = false;
 
       // Hack to fix miscalculation of canvas offset in some cases
       setTimeout(function(){
@@ -194,7 +193,7 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
       this.UIElements['reverb-wet'] = new Knob({
          domElementId: 'reverb_wet',
          changingCallback: function(value, normalizedValue){
-            console.log('reverb_wet');
+            PD.sendList(['wet', normalizedValue], 'reverb');
          },
          value: 0.5,
          width: '45px',
@@ -203,11 +202,12 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
          spriteInitialAngle: 270,
          label: 'Wet'
       });
+      PD.sendList(['wet'], 0.5, 'reverb');
 
       this.UIElements['reverb-dry'] = new Knob({
          domElementId: 'reverb_dry',
          changingCallback: function(value, normalizedValue){
-            console.log('reverb_dry');
+            PD.sendList(['dry', normalizedValue], 'reverb');
          },
          value: 0.5,
          width: '45px',
@@ -216,11 +216,12 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
          spriteInitialAngle: 270,
          label: 'Dry'
       });
+      PD.sendList(['dry'], 0.5, 'reverb');
 
       this.UIElements['reverb-damping'] = new Knob({
          domElementId: 'reverb_damp',
          changingCallback: function(value, normalizedValue){
-            console.log('reverb_damping');
+            PD.sendList(['damp', normalizedValue], 'reverb');
          },
          value: 0.5,
          width: '45px',
@@ -229,11 +230,12 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
          spriteInitialAngle: 270,
          label: 'Damp'
       });
+      PD.sendList(['damp'], 0.5, 'reverb');
 
       this.UIElements['reverb-size'] = new Knob({
          domElementId: 'reverb_size',
          changingCallback: function(value, normalizedValue){
-            console.log('reverb_size');
+            PD.sendList(['size', normalizedValue], 'reverb');
          },
          value: 0.5,
          width: '45px',
@@ -242,11 +244,13 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
          spriteInitialAngle: 270,
          label: 'Size'
       });
+      PD.sendList(['size'], 0.5, 'reverb');
+
 
       this.UIElements['reverb-fspread'] = new Knob({
          domElementId: 'reverb_fspread',
          changingCallback: function(value, normalizedValue){
-            console.log('reverb_fspread');
+            PD.sendList(['fspread', normalizedValue], 'reverb');
          },
          value: 0.5,
          width: '45px',
@@ -255,11 +259,12 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
          spriteInitialAngle: 270,
          label: 'Early'
       });
+      PD.sendList(['fspread'], 0.5, 'reverb');
 
       this.UIElements['reverb-spread'] = new Knob({
          domElementId: 'reverb_spread',
          changingCallback: function(value, normalizedValue){
-            console.log('reverb_spread');
+            PD.sendList(['spread', normalizedValue], 'reverb');
          },
          value: 0.5,
          width: '45px',
@@ -268,6 +273,7 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
          spriteInitialAngle: 270,
          label: 'Late'
       });
+      PD.sendList(['spread'], 0.5, 'reverb');
    };
 
    AppController.prototype.changeRoomSize = function(e){
@@ -360,65 +366,25 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
    AppController.prototype.initLoadSave = function(){
       $('#save-btn').on('click', this.save.bind(this));
       $('#load-btn').on('click', this.load.bind(this));
-      $('#load-file').on('change', this.loading.bind(this));
    };
 
    AppController.prototype.save = function(e){
-      var data = JSON.stringify( this.gatherParametersFromUI() );
-      localStorage.setItem('preset', data);
-      this.download(data, 'SoundScape.preset');
+      DBMFile.showDialog("Save Preset", "*.bounces", false, "preset.bounces", function(params){
+         var path = params['path'];
+         var data = JSON.stringify( this.gatherParametersFromUI() );
+         DBMFile.writeFile(path, data);
+      }.bind(this));
    };
 
    AppController.prototype.load = function(e){
-      $('#load-file').trigger('click');
-   };
-
-   AppController.prototype.loading = function(e){
-      var file = e.target.files[0]; 
-      var reader = new FileReader();
-      reader.onload = function(theFile){
-         var data = theFile.target.result;
-         data = JSON.parse(data);
-         this.setParametersFromPreset(data);
-
-         $('#load-file').val('');
-      }.bind(this);
-      reader.readAsText(file);
-
-   };
-
-   AppController.prototype.download = function(strData, strFileName, strMimeType) {
-      var D = document,
-      a = D.createElement("a");
-      strMimeType= strMimeType || "application/octet-stream";
-
-      if (navigator.msSaveBlob) { // IE10+
-         return navigator.msSaveBlob(new Blob([strData], {type: strMimeType}), strFileName);
-      } /* end if(navigator.msSaveBlob) */
-
-
-
-      if ('download' in a) { //html5 A[download]
-         a.href = "data:" + strMimeType + "," + encodeURIComponent(strData);
-         a.setAttribute("download", strFileName);
-         D.body.appendChild(a);
-         setTimeout(function() {
-            a.click();
-            D.body.removeChild(a);
-         }, 66);
-         return true;
-      } /* end if('download' in a) */
-
-
-      //do iframe dataURL download (old ch+FF):
-      var f = D.createElement("iframe");
-      D.body.appendChild(f);
-      f.src = "data:" +  strMimeType   + "," + encodeURIComponent(strData);
-
-      setTimeout(function() {
-         D.body.removeChild(f);
-      }, 333);
-      return true;
+      DBMFile.showDialog("Load Preset", "*.bounces", true, "", function(params){
+         var path = params['path'];
+         DBMFile.readFile(path, function(params){
+            var data = params['data'];
+            data = JSON.parse(data);
+            this.setParametersFromPreset(data);
+         }.bind(this));
+      }.bind(this));
    };
 
    AppController.prototype.gatherParametersFromUI = function() {
@@ -460,13 +426,26 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
    AppController.prototype.setParametersFromPreset = function(data) {
       this.UIElements['volume'].setValue(data['volume']);
       this.volume = data['volume'];
+      PD.sendFloat(this.volume, 'volume');
 
       this.UIElements['reverb-wet'].setValue(data['reverb-wet']);
+      PD.sendList(['wet', data['reverb-wet']], 'reverb');
+
       this.UIElements['reverb-dry'].setValue(data['reverb-dry']);
+      PD.sendList(['dry', data['reverb-dry']], 'reverb');
+
       this.UIElements['reverb-damping'].setValue(data['reverb-damping']);
+      PD.sendList(['damp', data['reverb-damping']], 'reverb');
+
       this.UIElements['reverb-size'].setValue(data['reverb-size']);
+      PD.sendList(['size', data['reverb-size']], 'reverb');
+
       this.UIElements['reverb-fspread'].setValue(data['reverb-fspread']);
+      PD.sendList(['fspread', data['reverb-fspread']], 'reverb');
+
       this.UIElements['reverb-spread'].setValue(data['reverb-spread']);
+      PD.sendList(['spread', data['reverb-spread']], 'reverb');
+
 
       this.UIElements['room-size'].slider('setValue', data['room-size']);
       this.roomSize = data['room-size'];
@@ -529,3 +508,4 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
 
    return AppController;
 });
+
