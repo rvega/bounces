@@ -289,8 +289,8 @@ static void oggread_open(t_oggread *x, t_symbol *filename)
 		ov_clear(&x->x_ov);
 		/* post("oggread~: previous file closed"); */
 	}
-		/* open file for reading */
-    if((x->x_file = sys_fopen(filename->s_name, "r")) < 0)
+	/* open file for reading */
+    if((x->x_file = sys_fopen(filename->s_name, "rb")) == 0)
     {
 		post("oggread~: could not open file \"%s\"", filename->s_name);
 		x->x_eos = 1;
@@ -304,18 +304,19 @@ static void oggread_open(t_oggread *x, t_symbol *filename)
 		x->x_outreadposition = 0;
 		x->x_outwriteposition = 0;
 		x->x_outunread = 0;
-		/* post("oggread~: file \"%s\" opened", filename->s_name); */
+		//post("oggread~: file \"%s\" opened", filename->s_name);
 		outlet_float( x->x_out_position, 0);
 
-			/* try to open as ogg vorbis file */
+		/* try to open as ogg vorbis file */
 		if(ov_open(x->x_file, &x->x_ov, NULL, -1) < 0)
-		{		/* an error occured (no ogg vorbis file ?) */
+		{		
+			/* an error occured (no ogg vorbis file ?) */
 			post("oggread~: error: could not open \"%s\" as an OggVorbis file", filename->s_name);
 			ov_clear(&x->x_ov);
 			post("oggread~: file closed due to error");
-      x->x_fd=-1;
-      x->x_eos=1;
-      return;
+      		x->x_fd=-1;
+      		x->x_eos=1;
+      		return;
 		}
 
 			/* print details about each logical bitstream in the input */
