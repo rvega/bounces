@@ -1,0 +1,294 @@
+#N canvas 18 22 1276 756 10;
+#X declare -path ../vendors/hoa/HoaLibrary/PureData/builds/;
+#X declare -path abstractions;
+#X obj 8 -92 declare -path ../vendors/hoa/HoaLibrary/PureData/builds/
+;
+#X obj 9 -69 declare -path abstractions;
+#X obj 618 385 hoa.meter~ @patching_rect [ 618 385 225 225 ] @size
+[ 225 225 ] @fontname [ helvetica ] @fontweight [ normal ] @fontslant
+[ regular ] @fontsize [ 11 ] @vectors [ 1 ] @loudspeakers [ 5 ] @angles
+[ 0 30 110 250 330 225 270 315 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 ] @offset [ 0 ] @rotation [ 0 ] @interval [ 50 ] @bgcolor [
+0.55 0.55 0.55 1 ] @mbgcolor [ 0.4 0.4 0.4 1 ] @bordercolor [ 0.25
+0.25 0.25 1 ] @coldcolor [ 0 0.6 0 0.8 ] @tepidcolor [ 0.6 0.73 0 0.8
+] @warmcolor [ 0.85 0.85 0 0.8 ] @hotcolor [ 1 0.6 0 0.8 ] @overcolor
+[ 1 0 0 0.8 ] @energycolor [ 0 0 1 0.8 ] @velocitycolor [ 1 0 0 0.8
+];
+#X obj 1150 371 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1
+1 1;
+#X obj 929 411 hoa.meter~ @patching_rect [ 929 411 225 225 ] @size
+[ 225 225 ] @fontname [ helvetica ] @fontweight [ normal ] @fontslant
+[ regular ] @fontsize [ 11 ] @vectors [ 1 ] @loudspeakers [ 2 ] @angles
+[ 90 270 90 135 180 225 270 315 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 ] @offset [ 0 ] @rotation [ 0 ] @interval [ 50 ] @bgcolor [
+0.55 0.55 0.55 1 ] @mbgcolor [ 0.4 0.4 0.4 1 ] @bordercolor [ 0.25
+0.25 0.25 1 ] @coldcolor [ 0 0.6 0 0.8 ] @tepidcolor [ 0.6 0.73 0 0.8
+] @warmcolor [ 0.85 0.85 0 0.8 ] @hotcolor [ 1 0.6 0 0.8 ] @overcolor
+[ 1 0 0 0.8 ] @energycolor [ 0 0 1 0.8 ] @velocitycolor [ 1 0 0 0.8
+];
+#N canvas 156 75 662 482 five 0;
+#X obj 565 -43 inlet;
+#X obj 290 -42 inlet~;
+#X obj 342 -43 inlet~;
+#X obj 390 -43 inlet~;
+#X obj 442 -44 inlet~;
+#X obj 493 -43 inlet~;
+#X obj 231 234 outlet~;
+#X obj 286 234 outlet~;
+#X obj 337 234 outlet~;
+#X obj 389 233 outlet~;
+#X obj 437 233 outlet~;
+#X obj 380 96 hoa.optim~ 3 @mode [ inPhase ] -----;
+#X obj 236 139 hoa.decoder~ 3 irregular 5 @restitution [ panning ]
+@angles [ 0 30 110 250 330 ];
+#X obj 80 229 dac~ 1 2 3 4 5;
+#X obj 443 55 spigot7~ ------------------;
+#X obj 187 -41 inlet~;
+#X obj 239 -42 inlet~;
+#X connect 0 0 14 7;
+#X connect 1 0 14 2;
+#X connect 2 0 14 3;
+#X connect 3 0 14 4;
+#X connect 4 0 14 5;
+#X connect 5 0 14 6;
+#X connect 11 0 12 0;
+#X connect 11 1 12 1;
+#X connect 11 2 12 2;
+#X connect 11 3 12 3;
+#X connect 11 4 12 4;
+#X connect 11 5 12 5;
+#X connect 11 6 12 6;
+#X connect 12 0 13 0;
+#X connect 12 0 6 0;
+#X connect 12 1 13 1;
+#X connect 12 1 7 0;
+#X connect 12 2 13 2;
+#X connect 12 2 8 0;
+#X connect 12 3 13 3;
+#X connect 12 3 9 0;
+#X connect 12 4 13 4;
+#X connect 12 4 10 0;
+#X connect 14 0 11 0;
+#X connect 14 1 11 1;
+#X connect 14 2 11 2;
+#X connect 14 3 11 3;
+#X connect 14 4 11 4;
+#X connect 14 5 11 5;
+#X connect 14 6 11 6;
+#X connect 15 0 14 0;
+#X connect 16 0 14 1;
+#X coords 0 482 1 481 240 240 0;
+#X restore 602 342 pd five -------------------;
+#N canvas 210 130 655 299 stereo 0;
+#X obj 565 -226 inlet;
+#X obj 290 -225 inlet~;
+#X obj 342 -226 inlet~;
+#X obj 390 -226 inlet~;
+#X obj 442 -227 inlet~;
+#X obj 493 -226 inlet~;
+#X obj 401 21 outlet~;
+#X obj 456 21 outlet~;
+#X obj 443 -128 spigot7~ ------------------;
+#X obj 187 -224 inlet~;
+#X obj 239 -225 inlet~;
+#X obj 294 20 dac~ 1 2;
+#X obj 404 -28 hoa.bin_sp_order3;
+#X connect 0 0 8 7;
+#X connect 1 0 8 2;
+#X connect 2 0 8 3;
+#X connect 3 0 8 4;
+#X connect 4 0 8 5;
+#X connect 5 0 8 6;
+#X connect 8 0 12 0;
+#X connect 8 1 12 1;
+#X connect 8 2 12 2;
+#X connect 8 3 12 3;
+#X connect 8 4 12 4;
+#X connect 8 5 12 5;
+#X connect 8 6 12 6;
+#X connect 9 0 8 0;
+#X connect 10 0 8 1;
+#X connect 12 0 6 0;
+#X connect 12 0 11 0;
+#X connect 12 1 7 0;
+#X connect 12 1 11 1;
+#X coords 0 299 1 298 240 240 0;
+#X restore 967 370 pd stereo -------------------;
+#X obj 773 341 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+1;
+#X obj 520 -72 hoa.map @patching_rect [ 520 -72 300 300 ] @size [ 300
+300 ] @fontname [ helvetica ] @fontweight [ normal ] @fontslant [ regular
+] @fontsize [ 11 ] @bgcolor [ 0.9 0.9 0.9 1 ] @bgcolor2 [ 0.75 0.75
+0.75 1 ] @bdcolor [ 0 0 0 1 ] @selcolor [ 0.36 0.37 0.37 0.5 ] @outputmode
+[ 0 ] @zoom [ 0.7 ] sources_parameters [ source 0 0.609524 0.752381
+0 0.2 0.2 0.2 1 s_nosymbol source 1 -0.0095238 0.761905 0 0.2 0.2 0.2
+1 s_nosymbol ];
+#X msg 522 -96 zoom 0.7;
+#X msg 855 195 start;
+#X obj 855 227 file waves/count.ogg;
+#X obj 855 167 loadbang;
+#X msg 1000 193 start;
+#X obj 1000 225 file waves/guitar.ogg;
+#X msg 904 194 0;
+#X msg 1057 192 0;
+#X msg 967 389 loudspeakers 2 \, angles 90 270 \, rotation 0;
+#X msg 618 362 loudspeakers 5 \, angles 0 30 110 250 330 \, rotation
+0;
+#X obj 641 267 hoa.map~ 3 2;
+#X obj 359 266 hoa.map~ 1 2;
+#X obj 286 416 hoa.meter~ @patching_rect [ 286 416 225 225 ] @size
+[ 225 225 ] @fontname [ helvetica ] @fontweight [ normal ] @fontslant
+[ regular ] @fontsize [ 11 ] @vectors [ 1 ] @loudspeakers [ 4 ] @angles
+[ 0 90 180 270 180 225 270 315 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 ] @offset [ 0 ] @rotation [ 0 ] @interval [ 50 ] @bgcolor [
+0.55 0.55 0.55 1 ] @mbgcolor [ 0.4 0.4 0.4 1 ] @bordercolor [ 0.25
+0.25 0.25 1 ] @coldcolor [ 0 0.6 0 0.8 ] @tepidcolor [ 0.6 0.73 0 0.8
+] @warmcolor [ 0.85 0.85 0 0.8 ] @hotcolor [ 1 0.6 0 0.8 ] @overcolor
+[ 1 0 0 0.8 ] @energycolor [ 0 0 1 0.8 ] @velocitycolor [ 1 0 0 0.8
+];
+#X msg 283 383 loudspeakers 4 \, rotation 0;
+#X obj 488 329 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+1;
+#N canvas 590 58 637 377 four 0;
+#X obj 394 -130 inlet;
+#X obj 301 -123 inlet~;
+#X obj 304 157 outlet~;
+#X obj 359 157 outlet~;
+#X obj 410 157 outlet~;
+#X obj 462 156 outlet~;
+#X obj 234 -27 spigot7~ ------------------;
+#X obj 198 -122 inlet~;
+#X obj 250 -123 inlet~;
+#X obj 26 158 dac~ 1 2 3 4;
+#X obj 214 48 hoa.decoder~ 1 ambisonics 4;
+#X obj 211 10 hoa.optim~ 1 @mode [ maxRe ];
+#X connect 0 0 6 7;
+#X connect 1 0 6 2;
+#X connect 6 0 11 0;
+#X connect 6 1 11 1;
+#X connect 6 2 11 2;
+#X connect 7 0 6 0;
+#X connect 8 0 6 1;
+#X connect 10 0 9 0;
+#X connect 10 0 2 0;
+#X connect 10 1 9 1;
+#X connect 10 1 3 0;
+#X connect 10 2 9 2;
+#X connect 10 2 4 0;
+#X connect 10 3 9 3;
+#X connect 10 3 5 0;
+#X connect 11 0 10 0;
+#X connect 11 1 10 1;
+#X connect 11 2 10 2;
+#X coords 0 377 1 376 240 240 0;
+#X restore 313 325 pd four -------------------;
+#X msg -31 359 loudspeakers 4 \, rotation 0 \, angles 45 135 225 315
+;
+#N canvas 590 58 637 377 four2 1;
+#X obj 394 -130 inlet;
+#X obj 301 -123 inlet~;
+#X obj 304 157 outlet~;
+#X obj 359 157 outlet~;
+#X obj 410 157 outlet~;
+#X obj 462 156 outlet~;
+#X obj 234 -27 spigot7~ ------------------;
+#X obj 198 -122 inlet~;
+#X obj 250 -123 inlet~;
+#X obj 26 158 dac~ 1 2 3 4;
+#X obj 214 48 hoa.decoder~ 1 ambisonics 4;
+#X obj 211 10 hoa.optim~ 1 @mode [ maxRe ];
+#X connect 0 0 6 7;
+#X connect 1 0 6 2;
+#X connect 6 0 11 0;
+#X connect 6 1 11 1;
+#X connect 6 2 11 2;
+#X connect 7 0 6 0;
+#X connect 8 0 6 1;
+#X connect 10 0 9 0;
+#X connect 10 0 2 0;
+#X connect 10 1 9 1;
+#X connect 10 1 3 0;
+#X connect 10 2 9 2;
+#X connect 10 2 4 0;
+#X connect 10 3 9 3;
+#X connect 10 3 5 0;
+#X connect 11 0 10 0;
+#X connect 11 1 10 1;
+#X connect 11 2 10 2;
+#X coords 0 377 1 376 240 240 0;
+#X restore -8 307 pd four2 -------------------;
+#X obj 171 308 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+1;
+#X obj 0 413 hoa.meter~ @patching_rect [ 0 413 225 225 ] @size [ 225
+225 ] @fontname [ helvetica ] @fontweight [ normal ] @fontslant [ regular
+] @fontsize [ 11 ] @vectors [ 1 ] @loudspeakers [ 4 ] @angles [ 45
+135 225 315 180 225 270 315 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 ] @offset [ 0 ] @rotation [ 0 ] @interval [ 50 ] @bgcolor [ 0.55
+0.55 0.55 1 ] @mbgcolor [ 0.4 0.4 0.4 1 ] @bordercolor [ 0.25 0.25
+0.25 1 ] @coldcolor [ 0 0.6 0 0.8 ] @tepidcolor [ 0.6 0.73 0 0.8 ]
+@warmcolor [ 0.85 0.85 0 0.8 ] @hotcolor [ 1 0.6 0 0.8 ] @overcolor
+[ 1 0 0 0.8 ] @energycolor [ 0 0 1 0.8 ] @velocitycolor [ 1 0 0 0.8
+];
+#X text 26 275 ESTE NO ME CUADRA!;
+#X connect 3 0 6 7;
+#X connect 5 0 2 0;
+#X connect 5 1 2 1;
+#X connect 5 2 2 2;
+#X connect 5 3 2 3;
+#X connect 5 4 2 4;
+#X connect 6 0 4 0;
+#X connect 6 1 4 1;
+#X connect 7 0 5 7;
+#X connect 8 0 19 0;
+#X connect 8 0 20 0;
+#X connect 9 0 8 0;
+#X connect 10 0 11 0;
+#X connect 11 0 19 0;
+#X connect 11 0 20 0;
+#X connect 11 2 10 0;
+#X connect 12 0 10 0;
+#X connect 12 0 13 0;
+#X connect 13 0 14 0;
+#X connect 14 0 19 1;
+#X connect 14 0 20 1;
+#X connect 14 2 13 0;
+#X connect 15 0 11 0;
+#X connect 16 0 14 0;
+#X connect 17 0 4 0;
+#X connect 18 0 2 0;
+#X connect 19 0 6 0;
+#X connect 19 0 5 0;
+#X connect 19 1 6 1;
+#X connect 19 1 5 1;
+#X connect 19 2 6 2;
+#X connect 19 2 5 2;
+#X connect 19 3 6 3;
+#X connect 19 3 5 3;
+#X connect 19 4 6 4;
+#X connect 19 4 5 4;
+#X connect 19 5 6 5;
+#X connect 19 5 5 5;
+#X connect 19 6 6 6;
+#X connect 19 6 5 6;
+#X connect 20 0 24 0;
+#X connect 20 0 26 0;
+#X connect 20 1 24 1;
+#X connect 20 1 26 1;
+#X connect 20 2 24 2;
+#X connect 20 2 26 2;
+#X connect 22 0 21 0;
+#X connect 23 0 24 3;
+#X connect 24 0 21 0;
+#X connect 24 1 21 1;
+#X connect 24 2 21 2;
+#X connect 24 3 21 3;
+#X connect 25 0 28 0;
+#X connect 26 0 28 0;
+#X connect 26 1 28 1;
+#X connect 26 2 28 2;
+#X connect 26 3 28 3;
+#X connect 27 0 26 3;

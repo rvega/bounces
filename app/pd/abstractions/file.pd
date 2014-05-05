@@ -1,4 +1,4 @@
-#N canvas 639 126 364 244 10;
+#N canvas 633 127 364 244 10;
 #X obj 25 27 loadbang;
 #X obj 25 81 getdir;
 #X obj 25 189 outlet~;
@@ -10,6 +10,7 @@
 #X obj 124 195 outlet;
 #X msg 25 135 open \$1/../\$2;
 #X msg 86 27 bang;
+#X obj 190 196 outlet;
 #X connect 0 0 3 0;
 #X connect 1 0 4 0;
 #X connect 3 0 1 0;
@@ -18,6 +19,7 @@
 #X connect 5 0 4 1;
 #X connect 6 0 2 0;
 #X connect 6 2 8 0;
+#X connect 6 3 11 0;
 #X connect 7 0 6 0;
 #X connect 9 0 6 0;
 #X connect 10 0 3 0;

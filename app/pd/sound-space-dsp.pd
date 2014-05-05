@@ -1,4 +1,4 @@
-#N canvas 1 22 1233 538 10;
+#N canvas 29 76 1233 538 10;
 #N canvas 516 104 395 459 files 0;
 #X obj -444 -927 outlet~;
 #X obj -438 -887 outlet~;
@@ -172,7 +172,7 @@
 #X connect 18 0 7 0;
 #X connect 19 0 8 0;
 #X connect 20 0 9 0;
-#X restore 660 51 pd files 31 40 ---;
+#X restore 658 51 pd files 31 40 ---;
 #N canvas 190 132 314 430 files 0;
 #X obj -444 -927 outlet~;
 #X obj -438 -887 outlet~;

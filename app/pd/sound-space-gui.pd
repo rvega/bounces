@@ -1,101 +1,163 @@
-#N canvas 10 22 1047 662 10;
+#N canvas 144 23 1075 696 10;
 #X declare -path abstractions;
 #X declare -path ../vendors/hoa/HoaLibrary/PureData/builds/;
 #X declare -path dbm;
-#X msg 427 99 start;
-#X msg 453 149 stop;
-#X msg 439 124 resume;
-#X text 475 97 play file from beginning;
-#X text 495 149 stop (pause) playing;
-#X text 485 122 resume playing at current position;
-#X obj 436 576 sound-space-dsp;
-#X obj 9 61 dbm-connect;
-#X obj 10 148 hoa.map @patching_rect [ 10 148 400 400 ] @size [ 400
+#X msg 427 53 start;
+#X msg 453 103 stop;
+#X msg 439 78 resume;
+#X text 475 51 play file from beginning;
+#X text 495 103 stop (pause) playing;
+#X text 485 76 resume playing at current position;
+#X obj 436 530 sound-space-dsp;
+#X obj 630 6 dbm-connect;
+#X obj 10 105 hoa.map @patching_rect [ 10 105 400 400 ] @size [ 400
 400 ] @fontname [ helvetica ] @fontweight [ normal ] @fontslant [ regular
 ] @fontsize [ 11 ] @bgcolor [ 0.9 0.9 0.9 1 ] @bgcolor2 [ 0.75 0.75
 0.75 1 ] @bdcolor [ 0 0 0 1 ] @selcolor [ 0.36 0.36 0.37 0.5 ] @outputmode
-[ 0 ] @zoom [ 0.7 ] sources_parameters [ source 0 -0.6356 -0.0741999
-0 0.2 0.2 0.2 1 s_nosymbol source 1 -0.707314 -0.0419143 0 0.2 0.2
-0.2 1 s_nosymbol source 2 -0.577314 -0.211914 0 0.2 0.2 0.2 1 s_nosymbol
-source 3 -0.387314 0.288086 0 0.2 0.2 0.2 1 s_nosymbol source 4 -0.247314
--0.0519143 0 0.2 0.2 0.2 1 s_nosymbol source 5 -0.567314 -0.301914
-0 0.2 0.2 0.2 1 s_nosymbol source 6 -0.367314 -0.161914 0 0.2 0.2 0.2
-1 s_nosymbol source 7 -0.687314 0.138086 0 0.2 0.2 0.2 1 s_nosymbol
-source 8 -0.677314 0.188086 0 0.2 0.2 0.2 1 s_nosymbol source 9 -0.217314
-0.158086 0 0.2 0.2 0.2 1 s_nosymbol source 10 -0.814644 0.730384 0
-0.2 0.2 0.2 1 s_nosymbol source 11 -0.519557 0.630377 0 0.2 0.2 0.2
-1 s_nosymbol source 12 -0.604644 0.360384 0 0.2 0.2 0.2 1 s_nosymbol
-source 13 -0.65468 0.464897 0 0.2 0.2 0.2 1 s_nosymbol source 14 -0.834644
-0.330384 0 0.2 0.2 0.2 1 s_nosymbol source 15 -0.961823 0.486325 0
-0.2 0.2 0.2 1 s_nosymbol source 16 -0.994644 0.330384 0 0.2 0.2 0.2
-1 s_nosymbol source 17 -0.414644 0.440384 0 0.2 0.2 0.2 1 s_nosymbol
-source 18 -0.994644 0.650384 0 0.2 0.2 0.2 1 s_nosymbol source 19 -0.634644
-0.790384 0 0.2 0.2 0.2 1 s_nosymbol source 20 0.0110652 -0.806877 0
-0.2 0.2 0.2 1 s_nosymbol source 21 -0.217507 -0.942592 0 0.2 0.2 0.2
-1 s_nosymbol source 22 0.0824953 -0.678306 0 0.2 0.2 0.2 1 s_nosymbol
-source 23 -0.0889348 -0.299735 0 0.2 0.2 0.2 1 s_nosymbol source 24
--0.274801 -0.289435 0 0.2 0.2 0.2 1 s_nosymbol source 25 -0.381793
--0.406877 0 0.2 0.2 0.2 1 s_nosymbol source 26 0.000635263 -0.502276
-0 0.2 0.2 0.2 1 s_nosymbol source 27 -0.267105 -0.773259 0 0.2 0.2
-0.2 1 s_nosymbol source 28 -0.475121 -0.765196 0 0.2 0.2 0.2 1 s_nosymbol
-source 29 -0.460364 -0.535449 0 0.2 0.2 0.2 1 s_nosymbol source 30
--0.206457 0.893133 0 0.2 0.2 0.2 1 s_nosymbol source 31 1.19286 1.10714
-0 0.2 0.2 0.2 1 s_nosymbol source 32 -0.471758 0.614687 0 0.2 0.2 0.2
-1 s_nosymbol source 33 -0.525845 0.376893 0 0.2 0.2 0.2 1 s_nosymbol
-source 34 -0.0438624 0.354293 0 0.2 0.2 0.2 1 s_nosymbol source 35
--0.273862 0.324293 0 0.2 0.2 0.2 1 s_nosymbol source 36 -0.0461524
-0.593633 0 0.2 0.2 0.2 1 s_nosymbol source 37 -0.515845 0.876892 0
-0.2 0.2 0.2 1 s_nosymbol source 38 -0.0264574 0.873133 0 0.2 0.2 0.2
-1 s_nosymbol source 39 -0.366152 0.843629 0 0.2 0.2 0.2 1 s_nosymbol
-source 40 -0.79375 -0.711965 0 0.2 0.2 0.2 1 s_nosymbol source 41 -0.65375
--0.0819636 0 0.2 0.2 0.2 1 s_nosymbol source 42 -0.53375 -0.711965
-0 0.2 0.2 0.2 1 s_nosymbol source 43 -0.97375 -0.451965 0 0.2 0.2 0.2
-1 s_nosymbol source 44 -0.43375 -0.511965 0 0.2 0.2 0.2 1 s_nosymbol
-source 45 -0.81375 -0.0719635 0 0.2 0.2 0.2 1 s_nosymbol source 46
--0.44375 -0.301964 0 0.2 0.2 0.2 1 s_nosymbol source 47 -0.95375 -0.241964
-0 0.2 0.2 0.2 1 s_nosymbol ] groups_parameters [ group 0 10 0 1 2 3
-4 5 6 7 8 9 0 0.2 0.2 0.2 1 s_nosymbol group 1 10 10 11 12 13 14 15
-16 17 18 19 0 0.2 0.2 0.2 1 s_nosymbol group 2 10 30 31 32 33 34 35
-36 37 38 39 0 0.2 0.2 0.2 1 s_nosymbol group 3 10 20 21 22 23 24 25
-26 27 28 29 0 0.2 0.2 0.2 1 s_nosymbol group 4 8 40 41 42 43 44 45
-46 47 0 0.2 0.2 0.2 1 s_nosymbol ] slots_parameters [ slot 0 slot 1
-slot 2 ];
-#X obj 10 88 loadbang;
-#X msg 87 115 size 400 400;
-#X obj 437 606 output~;
+[ 0 ] @zoom [ 0.866142 ] sources_parameters [ source 0 -0.959919 -0.92343
+0 0.2 0.2 0.2 1 s_nosymbol source 1 -0.651367 -0.925826 0 0.2 0.2 0.2
+1 s_nosymbol source 2 -0.332656 -0.925288 0 0.2 0.2 0.2 1 s_nosymbol
+source 3 -0.0278968 -0.925312 0 0.2 0.2 0.2 1 s_nosymbol source 4 -0.956174
+-0.612454 0 0.2 0.2 0.2 1 s_nosymbol source 5 -0.653919 -0.615734 0
+0.2 0.2 0.2 1 s_nosymbol source 6 -0.336455 -0.616033 0 0.2 0.2 0.2
+1 s_nosymbol source 7 -0.958811 -0.296252 0 0.2 0.2 0.2 1 s_nosymbol
+source 8 -0.646583 -0.293997 0 0.2 0.2 0.2 1 s_nosymbol source 9 -0.959652
+0.0177407 0 0.2 0.2 0.2 1 s_nosymbol source 10 0.604578 -0.926094 0
+0.2 0.2 0.2 1 s_nosymbol source 11 0.287528 -0.92486 0 0.2 0.2 0.2
+1 s_nosymbol source 12 0.288137 -0.619598 0 0.2 0.2 0.2 1 s_nosymbol
+source 13 -0.0248165 -0.615229 0 0.2 0.2 0.2 1 s_nosymbol source 14
+-0.0247579 -0.297755 0 0.2 0.2 0.2 1 s_nosymbol source 15 -0.333484
+-0.296047 0 0.2 0.2 0.2 1 s_nosymbol source 16 -0.333717 0.0178921
+0 0.2 0.2 0.2 1 s_nosymbol source 17 -0.649327 0.0185297 0 0.2 0.2
+0.2 1 s_nosymbol source 18 -0.644733 0.329328 0 0.2 0.2 0.2 1 s_nosymbol
+source 19 -0.96126 0.330302 0 0.2 0.2 0.2 1 s_nosymbol source 20 -0.959781
+0.642626 0 0.2 0.2 0.2 1 s_nosymbol source 21 -0.0228533 0.0189475
+0 0.2 0.2 0.2 1 s_nosymbol source 22 0.292299 0.0173072 0 0.2 0.2 0.2
+1 s_nosymbol source 23 0.289951 -0.297893 0 0.2 0.2 0.2 1 s_nosymbol
+source 24 0.606364 -0.299446 0 0.2 0.2 0.2 1 s_nosymbol source 25 0.598627
+-0.616752 0 0.2 0.2 0.2 1 s_nosymbol source 26 0.912892 -0.619482 0
+0.2 0.2 0.2 1 s_nosymbol source 27 0.917046 -0.9243 0 0.2 0.2 0.2 1
+s_nosymbol source 28 -0.0198444 0.332748 0 0.2 0.2 0.2 1 s_nosymbol
+source 29 -0.330639 0.333201 0 0.2 0.2 0.2 1 s_nosymbol source 30 -0.33616
+0.637367 0 0.2 0.2 0.2 1 s_nosymbol source 31 -0.649922 0.638805 0
+0.2 0.2 0.2 1 s_nosymbol source 32 -0.650808 0.953782 0 0.2 0.2 0.2
+1 s_nosymbol source 33 -0.961319 0.959968 0 0.2 0.2 0.2 1 s_nosymbol
+source 34 0.920137 -0.298094 0 0.2 0.2 0.2 1 s_nosymbol source 35 0.608263
+0.0215593 0 0.2 0.2 0.2 1 s_nosymbol source 36 0.919394 0.0233729 0
+0.2 0.2 0.2 1 s_nosymbol source 37 0.294085 0.33073 0 0.2 0.2 0.2 1
+s_nosymbol source 38 0.609092 0.334401 0 0.2 0.2 0.2 1 s_nosymbol source
+39 -0.0183997 0.639444 0 0.2 0.2 0.2 1 s_nosymbol source 40 0.29334
+0.640324 0 0.2 0.2 0.2 1 s_nosymbol source 41 -0.335966 0.95497 0 0.2
+0.2 0.2 1 s_nosymbol source 42 -0.0199216 0.956802 0 0.2 0.2 0.2 1
+s_nosymbol source 43 0.920275 0.954675 0 0.2 0.2 0.2 1 s_nosymbol source
+44 0.602012 0.955719 0 0.2 0.2 0.2 1 s_nosymbol source 45 0.290728
+0.955771 0 0.2 0.2 0.2 1 s_nosymbol source 46 0.919261 0.641471 0 0.2
+0.2 0.2 1 s_nosymbol source 47 0.606053 0.642496 0 0.2 0.2 0.2 1 s_nosymbol
+source 48 0.923365 0.335644 0 0.2 0.2 0.2 1 s_nosymbol ] groups_parameters
+[ group 0 49 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21
+22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44
+45 46 47 48 0 0.2 0.2 0.2 1 s_nosymbol ] slots_parameters [ slot 0
+slot 1 source 0 -0.959919 -0.92343 0 0.2 0.2 0.2 1 s_nosymbol source
+1 -0.651367 -0.925826 0 0.2 0.2 0.2 1 s_nosymbol source 2 -0.332656
+-0.925288 0 0.2 0.2 0.2 1 s_nosymbol source 3 -0.0278968 -0.925312
+0 0.2 0.2 0.2 1 s_nosymbol source 4 -0.956174 -0.612454 0 0.2 0.2 0.2
+1 s_nosymbol source 5 -0.653919 -0.615734 0 0.2 0.2 0.2 1 s_nosymbol
+source 6 -0.336455 -0.616033 0 0.2 0.2 0.2 1 s_nosymbol source 7 -0.958811
+-0.296252 0 0.2 0.2 0.2 1 s_nosymbol source 8 -0.646583 -0.293997 0
+0.2 0.2 0.2 1 s_nosymbol source 9 -0.959652 0.0177407 0 0.2 0.2 0.2
+1 s_nosymbol source 10 0.604578 -0.926094 0 0.2 0.2 0.2 1 s_nosymbol
+source 11 0.287528 -0.92486 0 0.2 0.2 0.2 1 s_nosymbol source 12 0.288137
+-0.619598 0 0.2 0.2 0.2 1 s_nosymbol source 13 -0.0248165 -0.615229
+0 0.2 0.2 0.2 1 s_nosymbol source 14 -0.0247579 -0.297755 0 0.2 0.2
+0.2 1 s_nosymbol source 15 -0.333484 -0.296047 0 0.2 0.2 0.2 1 s_nosymbol
+source 16 -0.333717 0.0178921 0 0.2 0.2 0.2 1 s_nosymbol source 17
+-0.649327 0.0185297 0 0.2 0.2 0.2 1 s_nosymbol source 18 -0.644733
+0.329328 0 0.2 0.2 0.2 1 s_nosymbol source 19 -0.96126 0.330302 0 0.2
+0.2 0.2 1 s_nosymbol source 20 -0.959781 0.642626 0 0.2 0.2 0.2 1 s_nosymbol
+source 21 -0.0228533 0.0189475 0 0.2 0.2 0.2 1 s_nosymbol source 22
+0.292299 0.0173072 0 0.2 0.2 0.2 1 s_nosymbol source 23 0.289951 -0.297893
+0 0.2 0.2 0.2 1 s_nosymbol source 24 0.606364 -0.299446 0 0.2 0.2 0.2
+1 s_nosymbol source 25 0.598627 -0.616752 0 0.2 0.2 0.2 1 s_nosymbol
+source 26 0.912892 -0.619482 0 0.2 0.2 0.2 1 s_nosymbol source 27 0.917046
+-0.9243 0 0.2 0.2 0.2 1 s_nosymbol source 28 -0.0198444 0.332748 0
+0.2 0.2 0.2 1 s_nosymbol source 29 -0.330639 0.333201 0 0.2 0.2 0.2
+1 s_nosymbol source 30 -0.33616 0.637367 0 0.2 0.2 0.2 1 s_nosymbol
+source 31 -0.649922 0.638805 0 0.2 0.2 0.2 1 s_nosymbol source 32 -0.650808
+0.953782 0 0.2 0.2 0.2 1 s_nosymbol source 33 -0.961319 0.959968 0
+0.2 0.2 0.2 1 s_nosymbol source 34 0.920137 -0.298094 0 0.2 0.2 0.2
+1 s_nosymbol source 35 0.608263 0.0215593 0 0.2 0.2 0.2 1 s_nosymbol
+source 36 0.919394 0.0233729 0 0.2 0.2 0.2 1 s_nosymbol source 37 0.294085
+0.33073 0 0.2 0.2 0.2 1 s_nosymbol source 38 0.609092 0.334401 0 0.2
+0.2 0.2 1 s_nosymbol source 39 -0.0183997 0.639444 0 0.2 0.2 0.2 1
+s_nosymbol source 40 0.29334 0.640324 0 0.2 0.2 0.2 1 s_nosymbol source
+41 -0.335966 0.95497 0 0.2 0.2 0.2 1 s_nosymbol source 42 -0.0199216
+0.956802 0 0.2 0.2 0.2 1 s_nosymbol source 43 0.920275 0.954675 0 0.2
+0.2 0.2 1 s_nosymbol source 44 0.602012 0.955719 0 0.2 0.2 0.2 1 s_nosymbol
+source 45 0.290728 0.955771 0 0.2 0.2 0.2 1 s_nosymbol source 46 0.919261
+0.641471 0 0.2 0.2 0.2 1 s_nosymbol source 47 0.606053 0.642496 0 0.2
+0.2 0.2 1 s_nosymbol source 48 0.923365 0.335644 0 0.2 0.2 0.2 1 s_nosymbol
+group 0 49 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21
+22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44
+45 46 47 48 0 0.2 0.2 0.2 1 s_nosymbol slot 2 ];
+#X obj 10 53 loadbang;
+#X msg 87 77 size 400 400;
+#X obj 437 560 output~;
 #X obj 355 6 declare -path abstractions;
-#X msg 493 303 wet \$1;
-#X obj 493 280 nbx 5 14 0 1 0 0 empty empty empty 0 -8 0 10 -262144
+#X msg 493 257 wet \$1;
+#X obj 493 234 nbx 5 14 0 1 0 0 empty empty empty 0 -8 0 10 -262144
 -1 -1 0 256;
-#X obj 552 305 nbx 5 14 0 1 0 0 empty empty empty 0 -8 0 10 -262144
+#X obj 552 259 nbx 5 14 0 1 0 0 empty empty empty 0 -8 0 10 -262144
 -1 -1 0 256;
-#X msg 552 328 dry \$1;
-#X obj 610 330 nbx 5 14 0 1 0 0 empty empty empty 0 -8 0 10 -262144
+#X msg 552 282 dry \$1;
+#X obj 610 284 nbx 5 14 0 1 0 0 empty empty empty 0 -8 0 10 -262144
 -1 -1 0 256;
-#X msg 610 349 damp \$1;
-#X obj 672 353 nbx 5 14 0 1 0 0 empty empty empty 0 -8 0 10 -262144
+#X msg 610 303 damp \$1;
+#X obj 672 307 nbx 5 14 0 1 0 0 empty empty empty 0 -8 0 10 -262144
 -1 -1 0 256;
-#X msg 672 371 size \$1;
-#X text 551 277 Wet / Dry (0 -1);
-#X text 669 329 Damping value (0 - 1);
-#X text 730 351 Size of the room (0 - 1);
-#X obj 821 399 nbx 5 14 0 1 0 0 empty empty empty 0 -8 0 10 -262144
+#X msg 672 325 size \$1;
+#X text 551 231 Wet / Dry (0 -1);
+#X text 669 283 Damping value (0 - 1);
+#X text 730 305 Size of the room (0 - 1);
+#X obj 821 353 nbx 5 14 0 1 0 0 empty empty empty 0 -8 0 10 -262144
 -1 -1 0 256;
-#X msg 821 418 spread \$1;
-#X obj 740 376 nbx 5 14 0 1 0 0 empty empty empty 0 -8 0 10 -262144
+#X msg 821 372 spread \$1;
+#X obj 740 330 nbx 5 14 0 1 0 0 empty empty empty 0 -8 0 10 -262144
 -1 -1 0 256;
-#X msg 740 396 fspread \$1;
-#X text 799 375 First spread (0 - 1);
-#X text 881 397 Late spread (0 - 1);
-#X text 490 256 Reverb;
+#X msg 740 350 fspread \$1;
+#X text 799 329 First spread (0 - 1);
+#X text 881 351 Late spread (0 - 1);
+#X text 490 210 Reverb;
 #X obj 9 6 declare -path ../vendors/hoa/HoaLibrary/PureData/builds/
 ;
-#X obj 9 27 declare -path dbm;
-#X obj 476 199 hsl 128 15 0 599 0 0 empty empty empty -2 -8 0 10 -262144
+#X obj 519 6 declare -path dbm;
+#X obj 476 153 hsl 128 15 0 599 0 0 empty empty empty -2 -8 0 10 -262144
 -1 -1 0 0;
-#X msg 475 234 seek \$1;
-#X obj 20 591 print AMB;
-#X msg 10 116 zoom 0.7;
+#X msg 475 188 seek \$1;
+#X obj 20 545 print AMB;
+#X msg 185 52 bang;
+#N canvas 812 22 450 300 load-preset 1;
+#X obj 26 202 outlet;
+#X msg 26 149 slot 1;
+#X obj 26 122 loadbang;
+#X obj 189 97 receive positions;
+#X obj 234 167 list trim;
+#X obj 234 145 list prepend;
+#X msg 303 119 source;
+#X obj 303 96 loadbang;
+#X text 192 66 receive from gui (DBM);
+#X text 305 168 <-- connect to outlet;
+#X obj 27 47 inlet;
+#X msg 109 155 slot store 1;
+#X connect 1 0 0 0;
+#X connect 2 0 1 0;
+#X connect 3 0 5 0;
+#X connect 5 0 4 0;
+#X connect 6 0 5 1;
+#X connect 7 0 6 0;
+#X connect 10 0 1 0;
+#X connect 11 0 0 0;
+#X restore 185 75 pd load-preset;
+#X msg 10 77 zoom 0.7;
 #X connect 0 0 6 1;
 #X connect 1 0 6 1;
 #X connect 2 0 6 1;
@@ -103,8 +165,8 @@ slot 2 ];
 #X connect 6 1 11 1;
 #X connect 8 0 6 0;
 #X connect 8 0 35 0;
-#X connect 9 0 36 0;
 #X connect 9 0 10 0;
+#X connect 9 0 38 0;
 #X connect 10 0 8 0;
 #X connect 13 0 6 3;
 #X connect 14 0 13 0;
@@ -120,4 +182,6 @@ slot 2 ];
 #X connect 27 0 6 3;
 #X connect 33 0 34 0;
 #X connect 34 0 6 1;
-#X connect 36 0 8 0;
+#X connect 36 0 37 0;
+#X connect 37 0 8 0;
+#X connect 38 0 8 0;
