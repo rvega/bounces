@@ -1,10 +1,14 @@
 define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/slider'], function(Listener, Source, Knob, Slider){
+
+   NO_PD = true;
+
    var AppController = function(){
       this.stageWidth = 600;
       this.stageHeight = 600;
 
       this.initStage();
       this.initArrowKeys();
+      this.initSoundOutputControls();
       this.initPD(function(){
          this.initUIControls();
          this.initSources();
@@ -18,6 +22,11 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
    // PureData
 
    AppController.prototype.initPD = function(callback){
+      if(NO_PD){
+         callback();
+         return;
+      }
+
       // Init PureData engine and load patch.
       PD.configurePlayback(44100, 2, false, false, function(){
          PD.openFile('pd', 'sound-space-no-gui.pd', function(){
@@ -506,6 +515,61 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
       }
    };
 
+   ///////////////////////////////////////////////////////////////////////////////// 
+   // Sound Output
+   AppController.prototype.initSoundOutputControls = function(){
+      this.speakerConfigVisible = false;
+      $('.sound-output input:radio').on('change', this.radioSpeakersChanged.bind(this));
+      $('#configure-speakers-btn').on('click', this.configureSpeakersBtnClicked.bind(this));
+      $('#speaker-fl, #speaker-fr, #speaker-bl, #speaker-br').on('click', this.clickedSpeaker.bind(this));
+   };
+
+   AppController.prototype.clickedSpeaker = function(e){
+      var whichSpeaker = $(e.currentTarget).attr('id');
+      PD.sendList([whichSpeaker], 'speaker_test');
+   };
+
+   AppController.prototype.radioSpeakersChanged = function(e){
+      var value = $(e.currentTarget).val();
+      if(value==4){
+         $('#configure-speakers-btn').show();
+      }
+      else{
+         $('#configure-speakers-btn').hide();
+         this.hideSpeakerConfig();
+         this.speakerConfigVisible = false;
+      }
+   };
+
+   AppController.prototype.configureSpeakersBtnClicked = function(e){
+      if(this.speakerConfigVisible){
+         this.hideSpeakerConfig();
+         this.speakerConfigVisible = false;
+      }
+      else{
+         this.showSpeakerConfig();
+         this.speakerConfigVisible = true;
+      }
+   };
+
+   AppController.prototype.showSpeakerConfig = function(){
+      PD.sendList(['stop'], 'play');
+      $('#configure-speakers-btn a').html('Done configuring speakers.');
+      $('.selected-source.controls').hide();
+      $('.reverb.controls').hide();
+      $('.space.controls').hide();
+      $('.music.controls').hide();
+      $('#configure-speakers').show();
+   };
+
+   AppController.prototype.hideSpeakerConfig = function(){
+      $('#configure-speakers-btn a').html('Configure speakers.');
+      $('.selected-source.controls').show();
+      $('.reverb.controls').show();
+      $('.space.controls').show();
+      $('.music.controls').show();
+      $('#configure-speakers').hide();
+   };
+
    return AppController;
 });
-

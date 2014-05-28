@@ -10,6 +10,10 @@ body * {
    cursor: default;
 }
 
+a{
+   color: #3d9bc9;
+}
+
 #main{
    display:none;
 }
@@ -148,4 +152,66 @@ button {
 
 #load-file{
    display:none;
+}
+
+.sound-output.controls{
+   height: auto;
+}
+
+#configure-speakers-btn{
+   display: none;
+}
+
+#configure-speakers-btn a{
+   cursor: pointer;
+}
+
+#configure-speakers{
+   display: none;
+   background: url('img/speaker-arrangement.png') no-repeat bottom center;
+   width: 280px;
+   height: 320px; 
+   margin-bottom: 10px;
+   position: relative;
+}
+
+
+.speaker{
+   display:block;
+   width: 98px;
+   height: 98px;
+   position: absolute;
+   cursor: pointer;
+}
+
+#speaker-fl:hover{
+   background: url('img/speaker-fl.png');
+}
+#speaker-fl{
+   top: 36px;
+   left: -9px;
+}
+
+#speaker-fr:hover{
+   background: url('img/speaker-fr.png');
+}
+#speaker-fr{
+   top: 38px;
+   left: 189px;
+}
+
+#speaker-br:hover{
+   background: url('img/speaker-br.png');
+}
+#speaker-br{
+   top: 237px;
+   left: 190px;
+}
+
+#speaker-bl:hover{
+   background: url('img/speaker-bl.png');
+}
+#speaker-bl{
+   top: 236px;
+   left: -8px;
 }

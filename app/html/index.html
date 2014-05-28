@@ -51,6 +51,22 @@
          <div class="knob" id="reverb_spread"></div>
       </div>
 
+      <div class="sound-output controls">
+         <h2>Sound Output</h2>
+         <p>
+            <input type="radio" id="num_channels_2" name="num_channels" value="2" checked /><label for="num_channels_2">Headphones</label>
+            <input type="radio" id="num_channels_4" name="num_channels" value="4" /><label for="num_channels_4">Quadraphonic</label>
+         </p>
+         <p id="configure-speakers-btn"><a href="#">Configure speakers</a></p>
+         <div id="configure-speakers">
+             <p>You should use a speaker arrangement as the one showed in the image. Click on the speaker icons to identify sound output channels.</p>
+             <a class="speaker" id="speaker-fl"></a>
+             <a class="speaker" id="speaker-fr"></a>
+             <a class="speaker" id="speaker-br"></a>
+             <a class="speaker" id="speaker-bl"></a>
+         </div>
+      </div>
+
       <div id="selected-source" class="controls">
          <h2>Selected Sound Source</h2>
          <p>Id:  <span id="selected-source-id"></span> </p>
