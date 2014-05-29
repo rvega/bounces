@@ -154,5 +154,9 @@ define(function(){
       this.calculateAmbisonicsSpacePosition();
    };
 
+   Source.prototype.setColor = function(num){
+   
+   };
+
    return Source;
 });

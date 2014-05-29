@@ -18,26 +18,28 @@ define(function(){
    };
 
    Listener.prototype.initView = function(){
-      this.view = new fabric.Triangle({
-         width: 18,
-         height: 30,
-         left: this.x,
-         top: this.y,
-         originX: 'center',
-         originY: 'center',
-         lockScalingX: true,
-         lockScalingY: true,
-         hasControls: false,
-         borderColor: '#F00',
-         cornerColor: '#F00',
-         fill: '#1b571a',
-         cornerSize: 8
-      });
       var self=this;
-      this.view.on('moving', function(e){self.modified.call(self, this, e)});
-      this.view.on('rotating', function(e){self.modified.call(self, this, e)});
-      this.view.on('selected', function(e){self.selected.call(self, this, e)});
-      this.stage.add(this.view);
+      this.view = fabric.Image.fromURL('styles/img/head.png',function(image){
+         image.set({
+            width: 131/3,
+            height: 139/3,
+            left: self.x,
+            top: self.y,
+            originX: 'center',
+            originY: 'center',
+            lockScalingX: true,
+            lockScalingY: true,
+            hasControls: false,
+            borderColor: '#F00',
+            cornerColor: '#F00',
+            cornerSize: 8
+         });
+
+         image.on('moving', function(e){self.modified.call(self, this, e)});
+         image.on('rotating', function(e){self.modified.call(self, this, e)});
+         image.on('selected', function(e){self.selected.call(self, this, e)});
+         self.stage.add(image);
+      });
 
       // this.viewAmbisonics = new fabric.Circle({
       //    radius: 8,
