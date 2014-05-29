@@ -39,6 +39,7 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
    ///////////////////////////////////////////////////////////////////////////////// 
    // Stage 
 
+
    AppController.prototype.initStage = function(){
       $('#stage').attr('width', this.stageWidth).attr('height', this.stageHeight);
       this.stage = new fabric.Canvas('stage',{
@@ -137,6 +138,42 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
       });
       this.stage.add(circle);
       this.roomSizeCircles.push(circle);
+
+      this.drawDiagonalLines();
+   };
+
+   AppController.prototype.drawDiagonalLines = function(){
+      var opts = {
+         stroke: '#AAA',
+         selectable: false
+      }
+      var line1 = new fabric.Line([], opts);
+      line1.left = 0;
+      line1.top = 230;
+      line1.width = 370;
+      line1.height = 600-230;
+      this.stage.add(line1);
+
+      var line2 = new fabric.Line([], opts);
+      line2.left = 0;
+      line2.top = 65;
+      line2.width = 560;
+      line2.height = 600-65;
+      this.stage.add(line2);
+
+      var line3 = new fabric.Line([], opts);
+      line3.left = 155;
+      line3.top = 0;
+      line3.width = 600-155;
+      line3.height = 445;
+      this.stage.add(line3);
+
+      var line4 = new fabric.Line([], opts);
+      line4.left = 345;
+      line4.top = 0;
+      line4.width = 600-345;
+      line4.height = 250;
+      this.stage.add(line4);
    };
 
    ///////////////////////////////////////////////////////////////////////////////// 
@@ -329,14 +366,6 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
    // Sound Sources
 
    AppController.prototype.initSources = function(){
-      this.listener = new Listener({
-         x: Math.floor(this.stageHeight/2),
-         y: Math.floor(this.stageWidth/2),
-         stage: this.stage,
-         // canvasAmbisonics: this.ambisonics,
-         parentController: this
-      });
-
       this.sources= [];   
       for(var i=0; i<49; i++){
          this.sources.push(new Source({
@@ -349,6 +378,15 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
             // canvasAmbisonics: this.ambisonics,
          }));
       }
+
+      this.listener = new Listener({
+         x: Math.floor(this.stageHeight/2),
+         y: Math.floor(this.stageWidth/2),
+         stage: this.stage,
+         // canvasAmbisonics: this.ambisonics,
+         parentController: this
+      });
+
 
       $('#source-name').on('change input', this.setSelectedSourceName.bind(this));
 

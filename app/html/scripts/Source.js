@@ -21,23 +21,43 @@ define(function(){
    };
 
    Source.prototype.initView = function(){
-      this.view = new fabric.Text('X', {
+      var text = new fabric.Text(this.name, {
          fontFamily: 'Arial',
-         fontSize: 14,
+         fontSize: 12,
          fontWeight: 'bold',
          left: this.x,
          top: this.y,
          originX: 'center',
          originY: 'center',
-         lockScalingX: true,
-         lockScalingY: true,
-         fill: '#222',
+         fill: '#222'
+      });
+   
+      var square = new fabric.Rect({
+         left:this.x,
+         top:this.y,
+         width: 30,
+         height: 30,
+         originX: 'center',
+         originY: 'center',
+         fill: '#EEE',
+         stroke: '#000',
+      });
+
+      var group = new fabric.Group([square, text], {
+         width: 30,
+         height:30,
          hasControls: false,
          hasRotatingPoint: false,
          borderColor: '#F00',
          cornerColor: '#F00',
-         cornerSize: 0
+         cornerSize: 0,
+         lockScalingX: true,
+         lockScalingY: true,
       });
+
+      this.square = square;
+      this.text = text;
+      this.view = group;
       this.view.source = this;
       
       var self = this;
@@ -122,6 +142,10 @@ define(function(){
    };
 
    Source.prototype.update = function(){
+      this.text.set({
+         text: this.name,
+         width: 30
+      });
       this.view.set({
          left: this.x,
          top: this.y

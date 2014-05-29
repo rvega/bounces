@@ -28,8 +28,9 @@ a{
 }
 
 h1{
-   /* margin: 10px 0 5px 0; */
+   margin: 0 0 5px 0px;
    font-size: 30px;
+   /* float:left; */
 }
 
 h2{
