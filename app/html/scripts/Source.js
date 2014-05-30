@@ -154,8 +154,27 @@ define(function(){
       this.calculateAmbisonicsSpacePosition();
    };
 
-   Source.prototype.setColor = function(num){
-   
+   Source.prototype.setLevel = function(level){
+      var color;
+      if(level < 15){
+         color = '#EEE';
+      }
+      else if(level < 20){
+         color = '#bfeebe';
+      }
+      else if(level < 40){
+         color = '#8fed8f';
+      }
+      else if(level < 60){
+         color = '#60eb60';
+      }
+      else if(level < 80){
+         color = '#30ea30';
+      }
+      else{
+         color = '#01ea01';
+      }
+      this.square.setFill(color);
    };
 
    return Source;

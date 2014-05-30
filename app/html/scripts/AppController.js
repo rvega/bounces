@@ -1,6 +1,6 @@
 define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/slider'], function(Listener, Source, Knob, Slider){
 
-   NO_PD = true;
+   NO_PD = false;
 
    var AppController = function(){
       this.stageWidth = 600;
@@ -13,6 +13,7 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
          this.initUIControls();
          this.initSources();
          this.initLoadSave();
+         this.initSoundLevels();
          $('#main').show();
          $('#loading').hide();
       }.bind(this));
@@ -554,6 +555,19 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
    };
 
    ///////////////////////////////////////////////////////////////////////////////// 
+   // Sound Levels
+   AppController.prototype.initSoundLevels = function(){
+      PD.bind('level',this.receivedSoundLevel.bind(this)); 
+   };
+
+   AppController.prototype.receivedSoundLevel = function(value){
+      value = value.split(" ");
+      var source = this.sources[value[0]-1];
+      source.setLevel(value[1]);
+      // console.log(value);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////// 
    // Sound Output
    AppController.prototype.initSoundOutputControls = function(){
       this.speakerConfigVisible = false;
@@ -564,7 +578,20 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
 
    AppController.prototype.clickedSpeaker = function(e){
       var whichSpeaker = $(e.currentTarget).attr('id');
-      PD.sendList([whichSpeaker], 'speaker_test');
+      var message;
+      if(whichSpeaker=='speaker-fl'){
+         message = '0';
+      }
+      if(whichSpeaker=='speaker-fr'){
+         message = '1';
+      }
+      if(whichSpeaker=='speaker-bl'){
+         message = '2';
+      }
+      if(whichSpeaker=='speaker-br'){
+         message = '3';
+      }
+      PD.sendFloat(message, 'test');
    };
 
    AppController.prototype.radioSpeakersChanged = function(e){
