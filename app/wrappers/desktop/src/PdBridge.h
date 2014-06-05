@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QVariantMap>
+#include <QTimer>
 #include "WebPage.h"
 #include "Audio.h"
 
@@ -25,6 +26,7 @@ namespace DBM{
       protected:
          WebPage* page;
          Audio* audio;
+         QTimer* timer;
 
       signals:
          // To tell JS to execute a success callback, do fireOKCallback(cbID, params),
@@ -34,8 +36,11 @@ namespace DBM{
          void doReceiveBang(QString dest);
          void doReceiveFloat(QString dest, float num);
          void doReceiveSymbol(QString dest, QString symbol);
-         // void receiveList(QString dest, const pd::List& list);
+         void doReceiveList(QString dest, QString list);
          // virtual void receiveMessage(QString dest, const std::string& msg, const pd::List& list);
+
+      private slots: 
+         void timerTick();
 
       public slots: 
          void configurePlayback(int sampleRate, int numberChannels, bool inputEnabled, bool mixingEnabled, int callbackId);

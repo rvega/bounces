@@ -10,7 +10,7 @@
 #X obj 230 140 list trim;
 #X obj 230 111 receive reverb;
 #X obj 138 140 list trim;
-#X obj 138 111 receive play;
+#X obj 138 108 receive play;
 #X obj 310 261 receive volume;
 #X obj 140 341 *~ 0.5;
 #X obj 184 341 *~ 0.5;

@@ -1,6 +1,6 @@
 define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/slider'], function(Listener, Source, Knob, Slider){
 
-   NO_PD = false;
+   NO_PD = true;
 
    var AppController = function(){
       this.stageWidth = 600;
@@ -16,6 +16,7 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
          this.initSoundLevels();
          $('#main').show();
          $('#loading').hide();
+         this.loadDefaultPreset();
       }.bind(this));
    };
 
@@ -29,7 +30,7 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
       }
 
       // Init PureData engine and load patch.
-      PD.configurePlayback(44100, 2, false, false, function(){
+      PD.configurePlayback(44100, 4, false, false, function(){
          PD.openFile('pd', 'sound-space-no-gui.pd', function(){
             PD.setActive(true);
             callback();
@@ -411,6 +412,15 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
 
    ///////////////////////////////////////////////////////////////////////////////// 
    // Load & Save
+   AppController.prototype.loadDefaultPreset = function(){
+      var path = 'html/presets/bounces.bounces';
+      DBMFile.readFile(path, function(params){
+         var data = params['data'];
+         data = JSON.parse(data);
+         this.setParametersFromPreset(data);
+      }.bind(this));
+   };
+
    AppController.prototype.initLoadSave = function(){
       $('#save-btn').on('click', this.save.bind(this));
       $('#load-btn').on('click', this.load.bind(this));
@@ -517,54 +527,114 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
    /////////////////////////////////////////////////////////////////////////////////
    // Arrow keys
    AppController.prototype.initArrowKeys = function(){
+      this.timerCounter=0;
+      this.moving = false;
+      this.rotating = false;
+      this.linearSpeed = 0;
+      this.angularSpeed = 0;
+      this.movementTimer = 0;
       $(document).on('keydown', this.keydown.bind(this));
+      $(document).on('keyup', this.keyup.bind(this));
+   };
+
+   AppController.prototype.keyup = function(e){
+      console.log('up');
+      // return;
+      var LEFT = 37;
+      var UP = 38;
+      var RIGHT = 39;
+      var DOWN = 40;
+
+      if(e.which==UP || e.which==DOWN){
+         this.moving=false;
+      }
+      if(e.which==LEFT || e.which==RIGHT){
+         this.rotating=false;
+      }
+
+      if(e.which==UP || e.which==DOWN || e.which==LEFT || e.which==RIGHT){
+         this.timerCounter=0;
+         return false;
+      }
+      else{
+         return true;
+      }
    };
 
    AppController.prototype.keydown = function(e){
-      var Q = 81;
-      var W = 87;
-      var E = 69;
-      var A = 65;
-      var S = 83;
-      var D = 68 ;
+      console.log('down');
+      // return;
+      var LEFT = 37;
+      var UP = 38;
+      var RIGHT = 39;
+      var DOWN = 40;
 
-      if(e.which==Q){
-         this.listener.angle -= 5;
-         this.listener.update();
+      if(e.which==UP && !this.moving){
+         this.linearSpeed = -2;
+         this.moving=true;
       }
-      else if(e.which==E){
-         this.listener.angle += 5; 
-         this.listener.update();
+      else if(e.which==DOWN && !this.moving){
+         this.linearSpeed = 2;
+         this.moving=true;
       }
-      else if(e.which==W){
-         this.listener.y -= 5;
-         this.listener.update();
+      else if(e.which==RIGHT){
+         this.rotating=true;
+         console.log('RIGHT');
       }
-      else if(e.which==S){
-         this.listener.y += 5;
-         this.listener.update();
+      else if(e.which==LEFT){
+         this.rotating=true;
+         console.log('left');
       }
-      else if(e.which==A){
-         this.listener.x -= 5;
-         this.listener.update();
+
+      if(e.which==UP || e.which==DOWN || e.which==LEFT || e.which==RIGHT){
+         if(this.movementTimer==0){
+            this.movementTimer = setInterval(this.movementLoop.bind(this),60);
+            this.timerCounter=0;
+         }
+
+         return false;
       }
-      else if(e.which==D){
-         this.listener.x += 5;
-         this.listener.update();
+      else{
+         return true;
       }
+   };
+
+   AppController.prototype.movementLoop = function(e){
+      // console.log('e');
+      this.listener.y += this.linearSpeed;
+
+      if(!this.moving){
+         var linearAcceleration = 0.5;
+         this.linearSpeed = this.linearSpeed*linearAcceleration;
+      }
+      else{
+         this.timerCounter = this.timerCounter+1; 
+         if(this.timerCounter == 20){
+            this.linearSpeed = this.linearSpeed*5;
+         }
+      }
+
+      if(Math.abs(this.linearSpeed) < 0.01){
+         clearInterval(this.movementTimer);
+         this.movementTimer=0;
+      }
+
+      this.listener.update();
    };
 
    ///////////////////////////////////////////////////////////////////////////////// 
    // Sound Levels
    AppController.prototype.initSoundLevels = function(){
-      PD.bind('level',this.receivedSoundLevel.bind(this)); 
+      PD.bind('levels',this.receivedSoundLevels.bind(this)); 
    };
 
-   AppController.prototype.receivedSoundLevel = function(value){
+   AppController.prototype.receivedSoundLevels = function(value){
       value = value.split(" ");
-      var source = this.sources[value[0]-1];
-      source.setLevel(value[1]);
-      // console.log(value);
+      for(var i=0; i<value.length-1; i++){
+         var source = this.sources[i];
+         source.setLevel(value[i]);
+      }
+      this.stage.renderAll();
    }
 
    ///////////////////////////////////////////////////////////////////////////////// 

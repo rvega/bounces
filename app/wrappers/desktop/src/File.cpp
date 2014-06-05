@@ -1,6 +1,7 @@
 #include <iostream>
 #include <QFileDialog>
 #include <QTextStream>
+#include <QApplication>
 
 #include "File.h"
 
@@ -41,8 +42,14 @@ void DBM::File::writeFile(QString path, QString data, int callbackId){
 }
 
 void DBM::File::readFile(QString path, int callbackId){
+   // If relative path
+   if(path[0] != QChar('/')){
+      path = QApplication::applicationDirPath() + "/res/" + path;
+   }
+
    QFile file(path);
    if(file.open(QFile::ReadOnly)){
+
       QTextStream in(&file);
       QString data = in.readLine();
       file.close();

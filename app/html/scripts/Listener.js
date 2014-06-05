@@ -19,7 +19,8 @@ define(function(){
 
    Listener.prototype.initView = function(){
       var self=this;
-      this.view = fabric.Image.fromURL('styles/img/head.png',function(image){
+      fabric.Image.fromURL('styles/img/head.png',function(image){
+         self.view = image;
          image.set({
             width: 131/3,
             height: 139/3,

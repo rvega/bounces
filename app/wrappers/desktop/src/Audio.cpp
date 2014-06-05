@@ -7,38 +7,21 @@
 // define the static property puredata of type PdBase
 pd::PdBase DBM::Audio::puredata;
 
-// define the static property mutex of type QMutex
-QMutex DBM::Audio::mutex;
-
 int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames, double streamTime, RtAudioStreamStatus status, void *data){
 
    if (status!=0) {
-      std::cout << "Stream over/underflow detected." << std::endl;
+      std::cerr << "Stream over/underflow detected." << std::endl;
    }
 
    float* out = (float*)outputBuffer;
    float* in = (float*)inputBuffer;
 
-   // Process 8 ticks, assuming block size of 512. Puredata processes in ticks of 64 samples
-   DBM::Audio::mutex.lock();
-   DBM::Audio::puredata.processFloat(8, in, out);
-   DBM::Audio::mutex.unlock();
-   
-   // Echo
-   // memcpy( outputBuffer, inputBuffer, nBufferFrames*4*2);
-
-   // Noise
-   // for(unsigned int i=0; i<nBufferFrames; i++) {
-   //    for(unsigned int j=0; j<2; j++){
-   //       rand = static_cast <float> (std::rand()) / static_cast <float> (RAND_MAX);
-   //       *out = rand;
-   //       out++;
-   //    }
-   // }
+   // Puredata processes in ticks of 64 samples
+   int ticks = nBufferFrames/64;
+   DBM::Audio::puredata.processFloat(ticks, in, out);
 
    return 0;
 
-   (void)nBufferFrames;
    (void)streamTime;
    (void)status;
    (void)data;
@@ -56,25 +39,39 @@ unsigned int DBM::Audio::getSampleRate(){
    return this->sampleRate;
 }
 
-int DBM::Audio::start(){
+int DBM::Audio::start(int sampleRate, int numberChannels, bool inputEnabled){
    if ( rtaudio.getDeviceCount() == 0 ) return(0);
 
-   // Get info for default audio device, choose the sample rate closer to 44100
+   // Get info for default audio device.
    RtAudio::DeviceInfo device = rtaudio.getDeviceInfo( rtaudio.getDefaultOutputDevice() );
+   
+   // Choose the sample rate closer to the requested
    std::vector<unsigned int> sampleRates = device.sampleRates;
    int diff = INT_MAX;
-   sampleRate = 44100;
    for(size_t i=0; i<sampleRates.size(); i++){
-      if( abs(sampleRates.at(i)-44100) < diff){
+      if( abs(sampleRates.at(i)-sampleRate) < diff){
          sampleRate = sampleRates.at(i);
-         diff = abs(sampleRate - 44100);
+         diff = abs(sampleRate - sampleRate);
       }
    }
 
-   Audio::mutex.lock();
-   puredata.init(2,2,sampleRate);
+   // Choose number of channels closer to requested
+   if(numberChannels > device.outputChannels){
+      numberChannels = device.outputChannels; 
+   }
+
+   // Input channels
+   int inChannels = 0;
+   if(inputEnabled){
+      inChannels = numberChannels;
+      if(inChannels > device.inputChannels){
+         inChannels = device.inputChannels; 
+      }
+   }
+
+   // Init PD
+   puredata.init(inChannels,numberChannels,sampleRate);
    Externals::init();
-   Audio::mutex.unlock();
 
    // int i = rtaudio.getDefaultOutputDevice();
    // RtAudio::DeviceInfo info = rtaudio.getDeviceInfo(i);
@@ -86,20 +83,28 @@ int DBM::Audio::start(){
 
    // Initialize audio
    blockSize = 512;
-   RtAudio::StreamParameters inputParams, outputParams;
+   RtAudio::StreamParameters outputParams;
    outputParams.deviceId = rtaudio.getDefaultOutputDevice();
-   outputParams.nChannels = 2;
+   outputParams.nChannels = numberChannels;
+
+   RtAudio::StreamParameters inputParams;
    inputParams.deviceId = rtaudio.getDefaultInputDevice();
-   inputParams.nChannels = 2;
+   inputParams.nChannels = inChannels;
 
    RtAudio::StreamOptions options;
-   options.flags = RTAUDIO_NONINTERLEAVED & RTAUDIO_SCHEDULE_REALTIME;
+   // options.flags = RTAUDIO_SCHEDULE_REALTIME | RTAUDIO_MINIMIZE_LATENCY;
+   options.flags = RTAUDIO_SCHEDULE_REALTIME;
    try {
-      rtaudio.openStream( &outputParams, &inputParams, RTAUDIO_FLOAT32, sampleRate, &blockSize, &audioCallback, NULL, &options);
+      if(inputEnabled){
+         rtaudio.openStream( &outputParams, &inputParams, RTAUDIO_FLOAT32, sampleRate, &blockSize, &audioCallback, NULL, &options, NULL);
+      }
+      else{
+         rtaudio.openStream( &outputParams, NULL, RTAUDIO_FLOAT32, sampleRate, &blockSize, &audioCallback, NULL, &options, NULL);
+      }
       rtaudio.startStream();
    }
    catch ( RtAudioError& e ) {
-      std::cout << '\n' << e.getMessage() << '\n' << std::endl;
+      std::cerr << '\n' << e.getMessage() << '\n' << std::endl;
       return 0;
    }
 
@@ -109,5 +114,6 @@ int DBM::Audio::start(){
 int DBM::Audio::stop(){
    if(rtaudio.isStreamRunning()) rtaudio.stopStream();
    if(rtaudio.isStreamOpen()) rtaudio.closeStream();
+   if(puredata.isInited()) puredata.clear();
    return 1;
 };

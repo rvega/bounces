@@ -9,9 +9,12 @@
 
 DBM::PdBridge::PdBridge(QObject* parent) : QObject(parent){
    audio = new Audio();
-   Audio::mutex.lock();
    Audio::puredata.setReceiver(this);
-   Audio::mutex.unlock();
+
+   timer = new QTimer(this);
+   timer->setTimerType(Qt::PreciseTimer);
+   connect(timer, SIGNAL(timeout()), this, SLOT(timerTick()));
+   timer->start(1);
 }
 
 DBM::PdBridge::~PdBridge(){
@@ -29,7 +32,7 @@ void DBM::PdBridge::setPage(WebPage* page){
 
 void DBM::PdBridge::configurePlayback(int sampleRate, int numberChannels, bool inputEnabled, bool mixingEnabled, int callbackId){
    
-   if(!audio->start()){
+   if(!audio->start(sampleRate, numberChannels, inputEnabled)){
       emit fireErrorCallback(callbackId+1, "Could not start audio engine.");
       return;
    }
@@ -47,10 +50,9 @@ void DBM::PdBridge::configurePlayback(int sampleRate, int numberChannels, bool i
 
 
 void DBM::PdBridge::openFile(QString path, QString fileName, int callbackId){
+   std::cout << "OpenFile" << std::endl;
    path = QApplication::applicationDirPath() + "/res/" + path;
-   Audio::mutex.lock();
    pd::Patch patch = Audio::puredata.openPatch(fileName.toStdString(), path.toStdString());
-   Audio::mutex.unlock();
    if(!patch.isValid()) {
       fireErrorCallback(callbackId+1, "Could not open patch");
       return;
@@ -60,13 +62,10 @@ void DBM::PdBridge::openFile(QString path, QString fileName, int callbackId){
 }
 
 void DBM::PdBridge::setActive(bool active){
-   Audio::mutex.lock();
    Audio::puredata.computeAudio(active);
-   Audio::mutex.unlock();
 }
 
 void DBM::PdBridge::sendList(QVariantList list, QString receiver){
-   Audio::mutex.lock();
    Audio::puredata.startMessage();
 
    for(int i=0; i<list.size(); i++){
@@ -82,25 +81,18 @@ void DBM::PdBridge::sendList(QVariantList list, QString receiver){
    }
 
    Audio::puredata.finishList(receiver.toStdString());
-   Audio::mutex.unlock();
 }
 
 void DBM::PdBridge::sendFloat(float num, QString receiver){
-   Audio::mutex.lock();
    Audio::puredata.sendFloat(receiver.toStdString(), num);
-   Audio::mutex.unlock();
 }
 
 void DBM::PdBridge::sendBang(QString receiver){
-   Audio::mutex.lock();
    Audio::puredata.sendBang(receiver.toStdString());
-   Audio::mutex.unlock();
 }
 
 void DBM::PdBridge::sendNoteOn(int channel, int pitch, int velocity){
-   Audio::mutex.lock();
    Audio::puredata.sendNoteOn(channel, pitch, velocity);
-   Audio::mutex.unlock();
 }
 
 void DBM::PdBridge::bind(QString sender){
@@ -128,12 +120,8 @@ void DBM::PdBridge::receiveSymbol(const std::string& dest, const std::string& sy
 }
 
 void DBM::PdBridge::receiveList(const std::string& dest, const pd::List& list){
-   std::cout <<  "DBM::PdBridge::receiveList is unimplemented." << std::endl;
-   std::exception err;
-   throw err;
-
-   (void)dest;
-   (void)list;
+   std::string message = list.toString();
+   emit doReceiveSymbol(QString::fromStdString(dest), QString::fromStdString(message));
 }
 
 void DBM::PdBridge::receiveMessage(const std::string& dest, const std::string& msg, const pd::List& list){
@@ -143,6 +131,14 @@ void DBM::PdBridge::receiveMessage(const std::string& dest, const std::string& m
    (void)msg;
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+// Timer to request messages from pd (so that methods above are triggered)
+// 
+
+void DBM::PdBridge::timerTick(){
+   Audio::puredata.receiveMessages();
+}
 
 /*
 

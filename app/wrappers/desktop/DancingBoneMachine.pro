@@ -93,9 +93,8 @@ win32{
 # There should be no need of modifying anything below this line
 ###############################################################################
 
-
 # Qmake and QT Config
-CONFIG += qt threaded
+CONFIG += qt threaded c++11
 QT += core widgets webkit webkitwidgets
 TEMPLATE = app
 
@@ -108,8 +107,9 @@ CONFIG(debug, debug|release){
    QMAKE_CXXFLAGS += -O3
 }
 
-# Compiler flagss
-QMAKE_CXXFLAGS += -Wall
+# Compiler flags
+QMAKE_CXXFLAGS = -Wall
+QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.7
 
 # Input
 HEADERS += src/*.h
@@ -131,12 +131,13 @@ win32{
 res.commands = mkdir -p $$RESOURCES_DIR/res \
 	&& rsync -avuL --del app/html/ $$RESOURCES_DIR/res/html \
 	&& rsync -avuL --exclude=dbm-connect.pd  app/pd/ $$RESOURCES_DIR/res/pd \
-   && rsync -avuL --exclude=*.pd_darwin --exclude=*.dll --exclude=*.lib  ../../../app/vendors/hoa/HoaLibrary/PureData/builds/ $$RESOURCES_DIR/res/pd/abstractions
+   && rsync -avuL --exclude=*.pd_darwin --exclude=*.dll --exclude=*.lib  ../../../app/vendors/hoa/HoaLibrary/PureData/builds/ $$RESOURCES_DIR/res/pd/abstractions \
+	&& rsync -avuL ../../../app/vendors/hoa/HoaLibrary/PureData/builds/HrtfDatabase $$RESOURCES_DIR/res/pd
 res.target = $$RESOURCES_DIR/res
 res.CONFIG = phony
 QMAKE_EXTRA_TARGETS += res
 POST_TARGETDEPS += $$RESOURCES_DIR/res
-MAKE_DISTCLEAN += -r $$DESTDIR/*
+QMAKE_DISTCLEAN += -r $$DESTDIR/*
 
 # Deploy (create distributable binary)
 deploy.target = deploy
@@ -169,28 +170,27 @@ run.depends = $(TARGET)
 QMAKE_EXTRA_TARGETS += run
 
 # RTAudio Library
-rtaudio_dir = "vendors/rtaudio"
-rtaudio_lib = "vendors/rtaudio/librtaudio.a"
-rtaudio.target = $$rtaudio_lib
-INCLUDEPATH += $$rtaudio_dir
-QMAKE_EXTRA_TARGETS += rtaudio
-PRE_TARGETDEPS += $$rtaudio_lib
-LIBS += $$rtaudio_lib
+HEADERS += vendors/rtaudio/RtAudio.h
+SOURCES += vendors/rtaudio/RtAudio.cpp
+INCLUDEPATH += vendors/rtaudio/include
+INCLUDEPATH += vendors/rtaudio
 macx{
    DEFINES += __MACOSX_CORE__ 
-   rtaudio.commands = cd $$rtaudio_dir && autoconf && ./configure --with-core && make
    LIBS += -framework CoreFoundation
    LIBS += -framework CoreAudio
    LIBS += -framework Accelerate
 }
 win32{
    DEFINES += __WINDOWS_DS__ 
-   rtaudio.commands = cd $$rtaudio_dir && ./configure --with-ds && make
 }
 
 # LibPD Library
 libpd_dir = "vendors/libpd"
 macx{
+	SOURCES += $$libpd_dir/cpp/*.cpp
+	HEADERS += $$libpd_dir/cpp/*.hpp
+	INCLUDEPATH += $${libpd_dir}/libpd_wrapper
+	INCLUDEPATH += $${libpd_dir}/libpd_wrapper/util
    libpd_lib = $$libpd_dir/build/Release/libpd-osx.a
    libpd.commands = cd $$libpd_dir && xcodebuild -project libpd.xcodeproj -target libpd-osx -configuration Release
 }
@@ -199,15 +199,17 @@ win32{
    libpd.commands = cd $$libpd_dir && make cpplib
  }
 libpd.target = $$libpd_lib
+DEFINES += LIBPD_USE_STD_MUTEX
 QMAKE_EXTRA_TARGETS += libpd
 PRE_TARGETDEPS += $$libpd_lib
 INCLUDEPATH += $${libpd_dir}/cpp
 INCLUDEPATH += $${libpd_dir}/pure-data/src
 LIBS += $$libpd_lib
+QMAKE_DISTCLEAN += && cd $$libpd_dir && make clobber && rm -rf build/* && cd ../../
 
 # system libraries for windows
 win32{
-   LIBS += -lstdc++ 
+   # LIBS += -lstdc++ 
    LIBS += -lgcc
    LIBS += -lpthread
    LIBS += -ldsound
