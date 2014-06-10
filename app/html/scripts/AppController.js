@@ -1,6 +1,6 @@
 define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/slider'], function(Listener, Source, Knob, Slider){
 
-   NO_PD = true;
+   NO_PD = false;
 
    var AppController = function(){
       this.stageWidth = 600;
@@ -538,8 +538,6 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
    };
 
    AppController.prototype.keyup = function(e){
-      console.log('up');
-      // return;
       var LEFT = 37;
       var UP = 38;
       var RIGHT = 39;
@@ -562,7 +560,6 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
    };
 
    AppController.prototype.keydown = function(e){
-      console.log('down');
       // return;
       var LEFT = 37;
       var UP = 38;
@@ -577,18 +574,19 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
          this.linearSpeed = 2;
          this.moving=true;
       }
-      else if(e.which==RIGHT){
+      else if(e.which==LEFT && !this.rotating){
+         this.angularSpeed = -5;
          this.rotating=true;
-         console.log('RIGHT');
       }
-      else if(e.which==LEFT){
+      else if(e.which==RIGHT && !this.rotating){
+         this.angularSpeed = 5;
          this.rotating=true;
-         console.log('left');
       }
 
       if(e.which==UP || e.which==DOWN || e.which==LEFT || e.which==RIGHT){
          if(this.movementTimer==0){
-            this.movementTimer = setInterval(this.movementLoop.bind(this),60);
+            // this.movementTimer = setInterval(this.movementLoop.bind(this),60);
+            this.movementTimer = window.requestAnimationFrame(this.movementLoop.bind(this));
             this.timerCounter=0;
          }
 
@@ -600,8 +598,25 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
    };
 
    AppController.prototype.movementLoop = function(e){
-      // console.log('e');
-      this.listener.y += this.linearSpeed;
+      var angle = (-1*this.listener.angle + 90) * Math.PI/180;
+      this.listener.x -= this.linearSpeed*Math.cos(angle);
+      this.listener.y += this.linearSpeed*Math.sin(angle);
+
+      if(this.listener.x <= 0){
+         this.listener.x = 0;
+      }
+      if(this.listener.y <= 0){
+         this.listener.y = 0;
+      }
+      if(this.listener.y > this.stageHeight){
+         this.listener.y=this.stageHeight;
+      }
+      if(this.listener.x > this.stageWidth){
+         this.listener.x=this.stageWidth;
+      }
+
+
+      this.listener.angle += this.angularSpeed;
 
       if(!this.moving){
          var linearAcceleration = 0.5;
@@ -614,9 +629,18 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
          }
       }
 
-      if(Math.abs(this.linearSpeed) < 0.01){
-         clearInterval(this.movementTimer);
+      if(!this.rotating){
+         var angularAcceleration = 0.5;
+         this.angularSpeed = this.angularSpeed*angularAcceleration;
+      }
+
+
+      if(Math.abs(this.linearSpeed)<0.01 && Math.abs(this.angularSpeed)<0.01){
+         // clearInterval(this.movementTimer);
          this.movementTimer=0;
+      }
+      else{
+         window.requestAnimationFrame(this.movementLoop.bind(this));
       }
 
       this.listener.update();

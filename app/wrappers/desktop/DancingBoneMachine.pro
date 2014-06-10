@@ -94,7 +94,7 @@ win32{
 ###############################################################################
 
 # Qmake and QT Config
-CONFIG += qt threaded c++11
+CONFIG += qt threaded c++11 release
 QT += core widgets webkit webkitwidgets
 TEMPLATE = app
 
@@ -140,7 +140,8 @@ POST_TARGETDEPS += $$RESOURCES_DIR/res
 QMAKE_DISTCLEAN += -r $$DESTDIR/*
 
 # Deploy (create distributable binary)
-deploy.target = deploy
+deploy.target = bin/$(QMAKE_TARGET)
+deploy.CONFIG = phony
 macx{
    QT_BIN_DIR = ~/Qt/5.2.1/clang_64/bin
 	deploy.commands = make distclean && qmake && make release && \
