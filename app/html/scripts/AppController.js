@@ -1,6 +1,7 @@
 define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/slider'], function(Listener, Source, Knob, Slider){
 
    NO_PD = false;
+   // NO_PD = true;
 
    var AppController = function(){
       this.stageWidth = 600;
@@ -228,11 +229,14 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
 
       // Space controls
       this.UIElements['room-size'] = $('#room-size').slider({
-         step: 0.000001,
          min: 1,
          max: 10,
          value: 1,
-         tooltip: 'hide'
+         step: 0.01,
+         tooltip: 'show',
+         formater: function(value){
+            return value.toFixed(2);
+         }
       }).on('slide', this.changeRoomSize.bind(this));
       
       
@@ -619,18 +623,23 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
       this.listener.angle += this.angularSpeed;
 
       if(!this.moving){
-         var linearAcceleration = 0.5;
+         var linearAcceleration = 0.9;
          this.linearSpeed = this.linearSpeed*linearAcceleration;
       }
       else{
-         this.timerCounter = this.timerCounter+1; 
-         if(this.timerCounter == 20){
-            this.linearSpeed = this.linearSpeed*5;
-         }
+         var sign = this.linearSpeed > 0 ? 1 : -1;
+         var maxSpeed = 10;
+         var accel = 1.1;
+         this.linearSpeed = sign * Math.min(Math.abs(this.linearSpeed*accel), maxSpeed);
+         // console.error(this.linearSpeed);
+         
+         // this.timerCounter = this.timerCounter+1; 
+         // if(this.timerCounter == 30){
+         // }
       }
 
       if(!this.rotating){
-         var angularAcceleration = 0.5;
+         var angularAcceleration = 0.8;
          this.angularSpeed = this.angularSpeed*angularAcceleration;
       }
 

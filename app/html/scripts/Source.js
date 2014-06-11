@@ -51,8 +51,11 @@ define(function(){
          borderColor: '#F00',
          cornerColor: '#F00',
          cornerSize: 0,
-         lockScalingX: true,
-         lockScalingY: true,
+         selectable: false
+         // lockScalingX: true,
+         // lockScalingY: true,
+         // lockMovementX: true,
+         // lockMMovementY: true,
       });
 
       this.square = square;

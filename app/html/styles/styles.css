@@ -14,6 +14,13 @@ a{
    color: #3d9bc9;
 }
 
+.clear{
+   clear:both;
+}
+.hidden{
+   display:none;
+}
+
 #main{
    display:none;
 }
@@ -215,4 +222,8 @@ button {
 #speaker-bl{
    top: 236px;
    left: -8px;
+}
+
+#credits{
+   padding-top: 5px;
 }
