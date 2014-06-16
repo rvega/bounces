@@ -94,7 +94,7 @@ win32{
 ###############################################################################
 
 # Qmake and QT Config
-CONFIG += qt threaded c++11 release
+CONFIG += qt threaded c++11 debug
 QT += core widgets webkit webkitwidgets
 TEMPLATE = app
 
@@ -104,11 +104,11 @@ CONFIG(debug, debug|release){
    CONFIG += console
 } else{
    # Optimize
-   QMAKE_CXXFLAGS += -O3
+   # QMAKE_CXXFLAGS += -O3
 }
 
 # Compiler flags
-QMAKE_CXXFLAGS = -Wall
+QMAKE_CXXFLAGS += -Wall -O3
 QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.7
 
 # Input
