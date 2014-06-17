@@ -60,6 +60,8 @@ QMAKE_EXTRA_TARGETS += vorbis
 PRE_TARGETDEPS += $$vorbis_lib
 INCLUDEPATH += $$vorbis_dir/include
 LIBS += $$vorbis_install_dir/libvorbisfile.a $$vorbis_lib $$vorbis_install_dir/libvorbisenc.a 
+QMAKE_DISTCLEAN += ; cd $$vorbis_dir ; make uninstall ; make distclean ; cd ../../../
+
 
 # ogg library
 ogg_dir = app/vendors/libogg
@@ -75,10 +77,12 @@ QMAKE_EXTRA_TARGETS += ogg
 PRE_TARGETDEPS += $$ogg_lib
 INCLUDEPATH += $$ogg_dir/include
 LIBS += $$ogg_lib
+QMAKE_DISTCLEAN += ; cd $$ogg_dir ; make uninstall ; make distclean ; cd ../../../
+
 
 # GNU Science Library (only needed in win)
 win32{
-   gsl_dir = ../../../app/vendors/libgsl
+   gsl_dir = app/vendors/libgsl
    gsl_lib = /usr/local/lib/libgsl.a
 
    INCLUDEPATH += /usr/local/include
@@ -88,6 +92,8 @@ win32{
    gsl.target = $$gsl_lib
    QMAKE_EXTRA_TARGETS += gsl
    PRE_TARGETDEPS += $$gsl_lib
+
+   QMAKE_DISTCLEAN += ; cd $$gsl_dir ; make uninstall ; make distclean ; cd ../../../
 }
 
 # There should be no need of modifying anything below this line
@@ -137,7 +143,7 @@ res.target = $$RESOURCES_DIR/res
 res.CONFIG = phony
 QMAKE_EXTRA_TARGETS += res
 POST_TARGETDEPS += $$RESOURCES_DIR/res
-QMAKE_DISTCLEAN += -r $$DESTDIR/*
+QMAKE_DISTCLEAN += ; rm -rf $$DESTDIR/*
 
 # Deploy (create distributable binary)
 deploy.target = bin/$(QMAKE_TARGET)
@@ -188,25 +194,25 @@ win32{
 # LibPD Library
 libpd_dir = "vendors/libpd"
 macx{
-	SOURCES += $$libpd_dir/cpp/*.cpp
-	HEADERS += $$libpd_dir/cpp/*.hpp
-	INCLUDEPATH += $${libpd_dir}/libpd_wrapper
-	INCLUDEPATH += $${libpd_dir}/libpd_wrapper/util
    libpd_lib = $$libpd_dir/build/Release/libpd-osx.a
    libpd.commands = cd $$libpd_dir && xcodebuild -project libpd.xcodeproj -target libpd-osx -configuration Release
 }
 win32{
-   libpd_lib = $$libpd_dir/libs/libpdcpp.a
-   libpd.commands = cd $$libpd_dir && make cpplib
+   libpd_lib = $$libpd_dir/libs/libpd.dll
+   libpd.commands = cd $$libpd_dir && make && cp libs/libpd.dll ../../bin
  }
 libpd.target = $$libpd_lib
 DEFINES += LIBPD_USE_STD_MUTEX
 QMAKE_EXTRA_TARGETS += libpd
 PRE_TARGETDEPS += $$libpd_lib
+SOURCES += $$libpd_dir/cpp/*.cpp
+HEADERS += $$libpd_dir/cpp/*.hpp
+INCLUDEPATH += $${libpd_dir}/libpd_wrapper
+INCLUDEPATH += $${libpd_dir}/libpd_wrapper/util
 INCLUDEPATH += $${libpd_dir}/cpp
 INCLUDEPATH += $${libpd_dir}/pure-data/src
 LIBS += $$libpd_lib
-QMAKE_DISTCLEAN += && cd $$libpd_dir && make clobber && rm -rf build/* && cd ../../
+QMAKE_DISTCLEAN += ; cd $$libpd_dir ; make clobber ; rm -rf build/* && cd ../../
 
 # system libraries for windows
 win32{
