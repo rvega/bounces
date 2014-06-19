@@ -188,7 +188,25 @@ macx{
    LIBS += -framework Accelerate
 }
 win32{
+   DEFINES -= UNICODE
+   
+   SOURCES += vendors/rtaudio/include/asio.cpp 
+   SOURCES += vendors/rtaudio/include/asiolist.cpp 
+   SOURCES += vendors/rtaudio/include/asiodrivers.cpp 
+   SOURCES += vendors/rtaudio/include/iasiothiscallresolver.cpp 
+   
+   HEADERS += vendors/rtaudio/include/asio.h
+   HEADERS += vendors/rtaudio/include/asiodrivers.h
+   HEADERS += vendors/rtaudio/include/asiolist.h
+   HEADERS += vendors/rtaudio/include/asiodrvr.h
+   HEADERS += vendors/rtaudio/include/asiosys.h
+   HEADERS += vendors/rtaudio/include/ginclude.h
+   HEADERS += vendors/rtaudio/include/iasiodrv.h
+   HEADERS += vendors/rtaudio/include/iasiothiscallresolver.h
+
+   INCLUDEPATH += vendors/rtaudio/include
    DEFINES += __WINDOWS_DS__ 
+   DEFINES += __WINDOWS_ASIO__ 
 }
 
 # LibPD Library

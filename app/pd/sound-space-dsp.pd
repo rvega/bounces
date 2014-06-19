@@ -143,7 +143,7 @@
 #X obj 249 362 hoa.freeverb~ 3;
 #X obj 249 472 outlet~;
 #X obj 420 474 outlet~;
-#N canvas 69 22 570 334 quad 0;
+#N canvas 69 50 570 334 quad 0;
 #X obj 58 16 inlet~;
 #X obj 11 15 inlet~;
 #X obj 107 16 inlet~;
@@ -181,7 +181,7 @@
 #X connect 14 0 13 0;
 #X restore 458 423 pd quad ----------------;
 #X obj 1022 14 inlet quadraphonic;
-#X obj 621 367 == 0;
+#X obj 629 378 == 0;
 #X obj 559 477 outlet~;
 #X obj 730 479 outlet~;
 #N canvas 659 281 570 334 stereo 0;
@@ -223,7 +223,7 @@
 #X obj 893 390 demultiplex~ 0 1 2 3;
 #X msg 767 331 start;
 #X obj 766 354 file waves/test.ogg;
-#N canvas 516 104 395 459 files 1;
+#N canvas 516 104 395 459 files 0;
 #X obj -444 -927 outlet~;
 #X obj -438 -887 outlet~;
 #X obj -432 -846 outlet~;
@@ -794,7 +794,6 @@
 #X connect 24 8 31 8;
 #X connect 24 9 31 9;
 #X connect 25 0 26 0;
-#X connect 26 0 12 0;
 #X connect 27 0 7 0;
 #X connect 27 1 7 1;
 #X connect 27 2 7 2;

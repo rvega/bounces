@@ -42,6 +42,10 @@ bridge(brdg)
    window->setMaximumSize(width, height);
    window->setMinimumSize(width, height);
 
+
+   // A hack to fix radio buttons in windows.
+   // https://bugreports.qt-project.org/browse/QTBUG-34163
+   QApplication::setStyle( new PatchedWebViewStyle() );
    
    webView = new QWebView(window);
    webView->setAttribute(Qt::WA_AcceptTouchEvents, false);

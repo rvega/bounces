@@ -24,12 +24,12 @@
 #X obj 278 341 *~ 0.5;
 #X obj 334 113 receive quadraphonic;
 #X obj 465 114 receive test;
-#X msg 304 177 1;
 #X obj 317 72 loadbang;
 #X obj 28 253 loadbang;
 #X msg 24 321 bang;
 #X obj 25 350 send levels;
 #X obj 25 288 delay 5000;
+#X msg 288 179 1;
 #X connect 0 0 10 0;
 #X connect 0 1 11 0;
 #X connect 0 2 17 0;
@@ -52,8 +52,8 @@
 #X connect 18 0 16 3;
 #X connect 19 0 0 3;
 #X connect 20 0 0 4;
-#X connect 21 0 0 3;
-#X connect 22 0 21 0;
-#X connect 23 0 26 0;
-#X connect 24 0 25 0;
-#X connect 26 0 24 0;
+#X connect 21 0 26 0;
+#X connect 22 0 25 0;
+#X connect 23 0 24 0;
+#X connect 25 0 23 0;
+#X connect 26 0 0 3;

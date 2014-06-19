@@ -17,6 +17,7 @@ namespace DBM{
          unsigned int getSampleRate();
 
       protected: 
+         RtAudio::DeviceInfo chooseDevice(int outputChannels);
          unsigned int sampleRate;
          unsigned int blockSize;
          RtAudio rtaudio;

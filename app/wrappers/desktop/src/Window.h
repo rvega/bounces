@@ -3,6 +3,11 @@
 #include <QString>
 #include <QMainWindow>
 #include <QWebView>
+
+#include <QProxyStyle>
+#include <QWebView>
+#include <QStyleOption>
+
 #include "PdBridge.h"
 #include "Console.h"
 #include "File.h"
@@ -32,4 +37,16 @@ namespace DBM{
       public slots:
          void connectToJS();
    };
+};
+
+
+// A hack to fix radio buttons in windows.
+// https://bugreports.qt-project.org/browse/QTBUG-34163
+class PatchedWebViewStyle : public QProxyStyle{
+   void drawControl(ControlElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget) const{
+      if( element == QStyle::CE_CheckBox || element == QStyle::CE_RadioButton ) {
+         option->styleObject->setProperty( "_q_no_animation", true );
+      }
+      QProxyStyle::drawControl( element, option, painter, widget );
+   }
 };

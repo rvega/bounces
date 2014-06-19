@@ -1,7 +1,7 @@
 define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/slider'], function(Listener, Source, Knob, Slider){
 
    NO_PD = false;
-   // NO_PD = true;
+   //NO_PD = true;
 
    var AppController = function(){
       this.stageWidth = 600;
@@ -698,7 +698,9 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
    };
 
    AppController.prototype.radioSpeakersChanged = function(e){
+
       var value = $(e.currentTarget).val();
+      console.log(value);
       if(value==4){
          $('#configure-speakers-btn').show();
       }

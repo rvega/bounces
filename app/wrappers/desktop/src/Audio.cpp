@@ -39,26 +39,135 @@ unsigned int DBM::Audio::getSampleRate(){
    return this->sampleRate;
 }
 
-int DBM::Audio::start(int sampleRate, int numberChannels, bool inputEnabled){
-   if ( rtaudio.getDeviceCount() == 0 ) return(0);
+RtAudio::DeviceInfo DBM::Audio::chooseDevice(int outputChannels){
+   // First, let's see if default device has enough channels.
+   RtAudio::DeviceInfo defaultDevice = rtaudio.getDeviceInfo( rtaudio.getDefaultOutputDevice() );
+   if(outputChannels <= defaultDevice.outputChannels){
+      return defaultDevice;
+   }
+
+   // Now let's look at all the devices across all apis. 
+         RtAudio::DeviceInfo asioDevice;
+         RtAudio::DeviceInfo dsDevice;
+         RtAudio asio(RtAudio::WINDOWS_ASIO);
+         RtAudio ds(RtAudio::WINDOWS_DS);
+         RtAudio core(RtAudio::MACOSX_CORE);
+
+
+   std::vector<RtAudio::Api> apis;
+   RtAudio::getCompiledApi(apis);
+   for (unsigned int i=0; i<apis.size(); i++){
+      if(apis.at(i) == RtAudio::MACOSX_CORE){
+         // In MacOS, use default no matter what.
+         return defaultDevice;
+      }
+
+      // In Aindows, prefer ASIO over DS, default to defaultDevice.
+      else if(apis.at(i) == RtAudio::WINDOWS_DS){
+                  std::cout << "DS" << std::endl;
+
+         unsigned int devices = ds.getDeviceCount();
+                  std::cout << devices << std::endl;
+
+         for(unsigned int i=0; i<devices; i++){
+            if (ds.getDeviceInfo(i).probed == true) {
+                                 std::cout << i << std::endl;
+
+               if(ds.getDeviceInfo(i).outputChannels >= outputChannels){
+                                    std::cout << "BOOM" << std::endl;
+
+                  dsDevice = ds.getDeviceInfo(i);
+                  break;
+               }
+            }
+         }
+      }
+      else if(apis.at(i) == RtAudio::WINDOWS_ASIO){
+         std::cout << "A" << std::endl;
+
+         unsigned int devices = asio.getDeviceCount();
+         for(unsigned int i=0; i<devices; i++){
+            if (asio.getDeviceInfo(i).probed == true) {
+               std::cout << "B" << std::endl;
+               if(asio.getDeviceInfo(i).outputChannels >= outputChannels){
+                  asioDevice = asio.getDeviceInfo(i);
+                  break;
+               }
+            }
+         }
+      }
+   }
+
+   if(asioDevice.probed){
+               std::cout << "D" << std::endl;
+
+      rtaudio = asio;
+      return asioDevice;
+   }
+   if(dsDevice.probed){
+               std::cout << "E" << std::endl;
+
+      rtaudio = ds;
+      return dsDevice;
+   }
+
+         std::cout << "C" << std::endl;
+
+   return defaultDevice;
+}
+
+int DBM::Audio::start(int requestedSampleRate, int numberChannels, bool inputEnabled){
+   RtAudio::DeviceInfo device = chooseDevice(numberChannels);
+   std::cout << "device = " << device.name;
+
+/*
+    // Determine the number of devices available
+   unsigned int devices = rtaudio.getDeviceCount();
+   // Scan through devices for various capabilities
+   RtAudio::DeviceInfo info;
+   for ( unsigned int i=0; i<devices; i++ ) {
+      info = rtaudio.getDeviceInfo( i );
+      if ( info.probed == true ) {
+         // Print, for example, the maximum number of output channels for each device
+         std::cout << "device = " << info.name;
+         std::cout << ": maximum output channels = " << info.outputChannels << "\n";
+      }
+   }
+
+
+   return 0;
+
+
 
    // Get info for default audio device.
    RtAudio::DeviceInfo device = rtaudio.getDeviceInfo( rtaudio.getDefaultOutputDevice() );
    
+
+
+   if ( rtaudio.getDeviceCount() == 0 ) return(0);
+
+   if(numberChannels > device.outputChannels){
+      // Try to find another device with enough channels.
+
+
+
+      numberChannels = device.outputChannels; 
+   }
+
+
+
    // Choose the sample rate closer to the requested
    std::vector<unsigned int> sampleRates = device.sampleRates;
    int diff = INT_MAX;
+   int sampleRate = INT_MAX;
    for(size_t i=0; i<sampleRates.size(); i++){
-      if( abs(sampleRates.at(i)-sampleRate) < diff){
+      if( abs(sampleRates.at(i) - requestedSampleRate) < diff){
+         diff = abs(sampleRates.at(i) - requestedSampleRate);
          sampleRate = sampleRates.at(i);
-         diff = abs(sampleRate - sampleRate);
       }
    }
 
-   // Choose number of channels closer to requested
-   if(numberChannels > device.outputChannels){
-      numberChannels = device.outputChannels; 
-   }
+
 
    // Input channels
    int inChannels = 0;
@@ -73,9 +182,11 @@ int DBM::Audio::start(int sampleRate, int numberChannels, bool inputEnabled){
    puredata.init(inChannels,numberChannels,sampleRate);
    Externals::init();
 
-   // int i = rtaudio.getDefaultOutputDevice();
-   // RtAudio::DeviceInfo info = rtaudio.getDeviceInfo(i);
-   // std::cout << info.name << std::endl;
+   //int i = rtaudio.getDefaultOutputDevice();
+   //RtAudio::DeviceInfo info = rtaudio.getDeviceInfo(i);
+   //std::cout << info.name << std::endl;
+   //std::cout << info.outputChannels << std::endl;
+
 
    // i = rtaudio.getDefaultInputDevice();
    // info = rtaudio.getDeviceInfo(i);
@@ -107,6 +218,7 @@ int DBM::Audio::start(int sampleRate, int numberChannels, bool inputEnabled){
       std::cerr << '\n' << e.getMessage() << '\n' << std::endl;
       return 0;
    }
+*/
 
    return 1;
 }
