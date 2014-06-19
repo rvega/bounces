@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		05D2EE9218D0F2E4007662E5 /* libogg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05D2EE9118D0F2E4007662E5 /* libogg.a */; };
+		05D2EE9318D0F2F9007662E5 /* libogg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05D2EE9118D0F2E4007662E5 /* libogg.a */; };
+		05D2EE9418D0F307007662E5 /* libogg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05D2EE9118D0F2E4007662E5 /* libogg.a */; };
 		730F23A3091827B100AB638C /* codec.h in Headers */ = {isa = PBXBuildFile; fileRef = F58520B90191D12B01A802FE /* codec.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		730F23A4091827B100AB638C /* vorbisenc.h in Headers */ = {isa = PBXBuildFile; fileRef = F58520BA0191D12B01A802FE /* vorbisenc.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		730F23A5091827B100AB638C /* vorbisfile.h in Headers */ = {isa = PBXBuildFile; fileRef = F58520BB0191D12B01A802FE /* vorbisfile.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -98,6 +101,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		05D2EE9118D0F2E4007662E5 /* libogg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libogg.a; path = "../../../../../../../../../../../Library/Developer/Xcode/DerivedData/Ogg-ejcriikeronxmzazijxzkbilwksw/Build/Products/Debug/libogg.a"; sourceTree = "<group>"; };
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		730F23F0091827B100AB638C /* Info.plist */ = {isa = PBXFileReference; explicitFileType = text.plist; fileEncoding = 4; path = Info.plist; sourceTree = "<group>"; };
 		730F23F1091827B100AB638C /* Vorbis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Vorbis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -188,6 +192,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05D2EE9218D0F2E4007662E5 /* libogg.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -195,6 +200,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05D2EE9318D0F2F9007662E5 /* libogg.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -202,6 +208,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05D2EE9418D0F307007662E5 /* libogg.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -222,6 +229,7 @@
 		0867D691FE84028FC02AAC07 /* vorbis */ = {
 			isa = PBXGroup;
 			children = (
+				05D2EE9118D0F2E4007662E5 /* libogg.a */,
 				F58520B70191D12B01A802FE /* Headers */,
 				F5D8F60803389C830112CE8F /* lib */,
 				089C1665FE841158C02AAC07 /* Resources */,
@@ -524,11 +532,19 @@
 /* Begin PBXProject section */
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+			};
 			buildConfigurationList = 730F23F3091827B200AB638C /* Build configuration list for PBXProject "Vorbis" */;
+			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* vorbis */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
 				730F23A1091827B100AB638C /* Vorbis */,
 				738835E30B18F870005C7A69 /* libvorbis (static) */,
@@ -703,19 +719,18 @@
 		730F23F4091827B200AB638C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = __MACOSX__;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = "/Users/rafa/Rafa/Projects/Active/DancingBoneMachine/repos/puredata(readme)/repo/vendor/libogg/current/include/**";
 			};
 			name = Debug;
 		};
 		730F23F5091827B200AB638C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = __MACOSX__;
 				OTHER_CFLAGS = (
@@ -723,7 +738,8 @@
 					"-ffast-math",
 					"-falign-loops=16",
 				);
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = "/Users/rafa/Rafa/Projects/Active/DancingBoneMachine/repos/puredata(readme)/repo/vendor/libogg/current/include/**";
 			};
 			name = Release;
 		};
@@ -740,6 +756,10 @@
 					../../ogg/include,
 				);
 				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Ogg-ejcriikeronxmzazijxzkbilwksw/Build/Products/Debug",
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = vorbis;
 				ZERO_LINK = YES;
@@ -757,6 +777,10 @@
 					../../ogg/include,
 				);
 				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Ogg-ejcriikeronxmzazijxzkbilwksw/Build/Products/Debug",
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = vorbis;
 				ZERO_LINK = NO;
@@ -777,6 +801,10 @@
 					../../ogg/include,
 				);
 				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Ogg-ejcriikeronxmzazijxzkbilwksw/Build/Products/Debug",
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = vorbisenc;
 				ZERO_LINK = YES;
@@ -795,6 +823,10 @@
 					../../ogg/include,
 				);
 				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Ogg-ejcriikeronxmzazijxzkbilwksw/Build/Products/Debug",
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = vorbisenc;
 				ZERO_LINK = NO;
@@ -814,6 +846,10 @@
 					../../ogg/include,
 				);
 				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Ogg-ejcriikeronxmzazijxzkbilwksw/Build/Products/Debug",
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = vorbisfile;
 				ZERO_LINK = YES;
@@ -831,6 +867,10 @@
 					../../ogg/include,
 				);
 				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Ogg-ejcriikeronxmzazijxzkbilwksw/Build/Products/Debug",
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = vorbisfile;
 				ZERO_LINK = NO;
