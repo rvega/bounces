@@ -47,25 +47,26 @@ SOURCES += $$HOA/Sources/hoaOptim/AmbisonicOptim.cpp
 # vorbis library
 vorbis_dir = app/vendors/libvorbis
 vorbis_install_dir = /usr/local/lib
+vorbis_lib = $$vorbis_install_dir/libvorbis.dylib
 win32{
    vorbis.commands = cd $$vorbis_dir && ./configure --with-ogg-libraries=/usr/local/lib --with-ogg-includes=/usr/local/include --disable-oggtest && make && make install 
 }
 macx{	
 	vorbis.commands = cd $$vorbis_dir && ./configure && make && sudo make install 
 }
-vorbis_lib = $$vorbis_install_dir/libvorbis.a
 vorbis.depends = ogg
 vorbis.target = $$vorbis_lib
 QMAKE_EXTRA_TARGETS += vorbis
 PRE_TARGETDEPS += $$vorbis_lib
 INCLUDEPATH += $$vorbis_dir/include
-LIBS += $$vorbis_install_dir/libvorbisfile.a $$vorbis_lib $$vorbis_install_dir/libvorbisenc.a 
+# LIBS += $$vorbis_install_dir/libvorbisfile.a $$vorbis_lib $$vorbis_install_dir/libvorbisenc.a 
+LIBS += -L/usr/local/lib -lvorbisfile -lvorbis -lvorbisenc 
 QMAKE_DISTCLEAN += ; cd $$vorbis_dir ; make uninstall ; make distclean ; cd ../../../
 
 
 # ogg library
 ogg_dir = app/vendors/libogg
-ogg_lib = /usr/local/lib/libogg.a
+ogg_lib = /usr/local/lib/libogg.dylib
 win32{
    ogg.commands = cd $$ogg_dir && ./configure && make && make install
 }
@@ -76,7 +77,7 @@ ogg.target = $$ogg_lib
 QMAKE_EXTRA_TARGETS += ogg
 PRE_TARGETDEPS += $$ogg_lib
 INCLUDEPATH += $$ogg_dir/include
-LIBS += $$ogg_lib
+LIBS += -logg
 QMAKE_DISTCLEAN += ; cd $$ogg_dir ; make uninstall ; make distclean ; cd ../../../
 
 

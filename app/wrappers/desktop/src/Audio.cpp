@@ -1,5 +1,5 @@
 #include <climits>
-//#include <cwchar>
+#include <QApplication>
 
 #include "Audio.h"
 #include "Externals.h"
@@ -13,12 +13,22 @@ int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int nBufferFra
       std::cerr << "Stream over/underflow detected." << std::endl;
    }
 
+   DBM::Audio* audio = (DBM::Audio*)data;
+
    float* out = (float*)outputBuffer;
    float* in = (float*)inputBuffer;
 
-   // Puredata processes in ticks of 64 samples
-   int ticks = nBufferFrames/64;
-   DBM::Audio::puredata.processFloat(ticks, in, out);
+   // if(DBM::Audio::puredata.isInited()){
+      // Puredata processes in ticks of 64 samples
+      int ticks = nBufferFrames/64;
+      DBM::Audio::puredata.processFloat(ticks, in, out);
+   // }
+   // else{
+   //    int numSamples = nBufferFrames * audio->getOutputChannels();
+   //    for(int i=0; i<numSamples; i++){
+   //       out[i] = 0; 
+   //    }
+   // }
 
    return 0;
 
@@ -28,197 +38,194 @@ int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int nBufferFra
 }
 
 
-DBM::Audio::Audio(){ }
+DBM::Audio::Audio(){ 
+   firstTime = true;
+}
 
 DBM::Audio::~Audio(){
    this->stop();
 }
 
 
+unsigned int DBM::Audio::getInputChannels(){
+   return this->inputChannels;
+}
+
+unsigned int DBM::Audio::getOutputChannels(){
+   return this->outputChannels;
+}
+
 unsigned int DBM::Audio::getSampleRate(){
    return this->sampleRate;
 }
 
-RtAudio::DeviceInfo DBM::Audio::chooseDevice(int outputChannels){
-   // First, let's see if default device has enough channels.
-   RtAudio::DeviceInfo defaultDevice = rtaudio.getDeviceInfo( rtaudio.getDefaultOutputDevice() );
-   if(outputChannels <= defaultDevice.outputChannels){
-      return defaultDevice;
+QVariantMap DBM::Audio::getDefaultOutputDevice(){
+   RtAudio rta;
+   int deviceId =  rta.getDefaultOutputDevice();
+   RtAudio::DeviceInfo info = rta.getDeviceInfo(deviceId);
+
+   RtAudio::Api api = rta.getCurrentApi(); 
+   QString apiName;
+   if(api == RtAudio::MACOSX_CORE){
+      apiName="CORE";
+   }
+   if(api == RtAudio::WINDOWS_DS){
+      apiName="DS";
+   }
+   if(api == RtAudio::WINDOWS_ASIO){
+      apiName="ASIO";
    }
 
-   // Now let's look at all the devices across all apis. 
-         RtAudio::DeviceInfo asioDevice;
-         RtAudio::DeviceInfo dsDevice;
-         RtAudio asio(RtAudio::WINDOWS_ASIO);
-         RtAudio ds(RtAudio::WINDOWS_DS);
-         RtAudio core(RtAudio::MACOSX_CORE);
+   QVariantMap deviceInfo;
+   deviceInfo["id"] = QVariant(deviceId);
+   deviceInfo["name"] = QVariant(QString::fromStdString(info.name));
+   deviceInfo["outputChannels"] = QVariant(info.outputChannels);
+   deviceInfo["inputChannels"] = QVariant(info.inputChannels);
+   deviceInfo["api"] = QVariant(apiName);
 
-
-   std::vector<RtAudio::Api> apis;
-   RtAudio::getCompiledApi(apis);
-   for (unsigned int i=0; i<apis.size(); i++){
-      if(apis.at(i) == RtAudio::MACOSX_CORE){
-         // In MacOS, use default no matter what.
-         return defaultDevice;
-      }
-
-      // In Aindows, prefer ASIO over DS, default to defaultDevice.
-      else if(apis.at(i) == RtAudio::WINDOWS_DS){
-                  std::cout << "DS" << std::endl;
-
-         unsigned int devices = ds.getDeviceCount();
-                  std::cout << devices << std::endl;
-
-         for(unsigned int i=0; i<devices; i++){
-            if (ds.getDeviceInfo(i).probed == true) {
-                                 std::cout << i << std::endl;
-
-               if(ds.getDeviceInfo(i).outputChannels >= outputChannels){
-                                    std::cout << "BOOM" << std::endl;
-
-                  dsDevice = ds.getDeviceInfo(i);
-                  break;
-               }
-            }
-         }
-      }
-      else if(apis.at(i) == RtAudio::WINDOWS_ASIO){
-         std::cout << "A" << std::endl;
-
-         unsigned int devices = asio.getDeviceCount();
-         for(unsigned int i=0; i<devices; i++){
-            if (asio.getDeviceInfo(i).probed == true) {
-               std::cout << "B" << std::endl;
-               if(asio.getDeviceInfo(i).outputChannels >= outputChannels){
-                  asioDevice = asio.getDeviceInfo(i);
-                  break;
-               }
-            }
-         }
-      }
+   QVariantList sampleRates;
+   for(int j=0; j<info.sampleRates.size(); j++){
+      sampleRates.insert(j, info.sampleRates.at(j));
    }
+   deviceInfo["sampleRates"] = sampleRates;
 
-   if(asioDevice.probed){
-               std::cout << "D" << std::endl;
-
-      rtaudio = asio;
-      return asioDevice;
-   }
-   if(dsDevice.probed){
-               std::cout << "E" << std::endl;
-
-      rtaudio = ds;
-      return dsDevice;
-   }
-
-         std::cout << "C" << std::endl;
-
-   return defaultDevice;
+   return deviceInfo;
 }
 
-int DBM::Audio::start(int requestedSampleRate, int numberChannels, bool inputEnabled){
-   RtAudio::DeviceInfo device = chooseDevice(numberChannels);
-   std::cout << "device = " << device.name;
-
-/*
-    // Determine the number of devices available
-   unsigned int devices = rtaudio.getDeviceCount();
-   // Scan through devices for various capabilities
-   RtAudio::DeviceInfo info;
-   for ( unsigned int i=0; i<devices; i++ ) {
-      info = rtaudio.getDeviceInfo( i );
-      if ( info.probed == true ) {
-         // Print, for example, the maximum number of output channels for each device
-         std::cout << "device = " << info.name;
-         std::cout << ": maximum output channels = " << info.outputChannels << "\n";
+QVariantMap DBM::Audio::getDevices(){
+   QVariantMap result;
+   RtAudio* rta;
+   std::vector<RtAudio::Api> apis;
+   RtAudio::getCompiledApi(apis);
+   QString apiName;
+   QVariantList devices;
+   int k=0;
+   for (unsigned int i=0; i<apis.size(); i++){
+      if(apis.at(i) == RtAudio::MACOSX_CORE){
+         apiName="CORE";
+         rta = new RtAudio(RtAudio::MACOSX_CORE);
       }
-   }
-
-
-   return 0;
-
-
-
-   // Get info for default audio device.
-   RtAudio::DeviceInfo device = rtaudio.getDeviceInfo( rtaudio.getDefaultOutputDevice() );
+      if(apis.at(i) == RtAudio::WINDOWS_DS){
+         rta = new RtAudio(RtAudio::WINDOWS_DS);
+         apiName="DS";
+      }
+      if(apis.at(i) == RtAudio::WINDOWS_ASIO){
+         rta = new RtAudio(RtAudio::WINDOWS_ASIO);
+         apiName="ASIO";
+      }
    
+      for(int i=0; i<rta->getDeviceCount(); i++){
+         RtAudio::DeviceInfo info = rta->getDeviceInfo(i);
+         if(info.probed){
+            QVariantMap deviceInfo;
+            deviceInfo["id"] = QVariant(i);
+            deviceInfo["name"] = QVariant(QString::fromStdString(info.name));
+            deviceInfo["outputChannels"] = QVariant(info.outputChannels);
+            deviceInfo["inputChannels"] = QVariant(info.inputChannels);
+            deviceInfo["api"] = QVariant(apiName);
 
+            QVariantList sampleRates;
+            for(int j=0; j<info.sampleRates.size(); j++){
+               sampleRates.insert(j, info.sampleRates.at(j));
+            }
+            deviceInfo["sampleRates"] = sampleRates;
 
-   if ( rtaudio.getDeviceCount() == 0 ) return(0);
-
-   if(numberChannels > device.outputChannels){
-      // Try to find another device with enough channels.
-
-
-
-      numberChannels = device.outputChannels; 
+            devices.insert(k, deviceInfo);
+         }
+         k++;
+      }
+      delete rta;
    }
 
+   result["devices"] = devices;
+   return result;
+}
 
+int DBM::Audio::openPatch(QString path, QString file){
+
+   path = QApplication::applicationDirPath() + "/res/" + path;
+   std::cout << "XX" << std::endl;
+   patch = puredata.openPatch(file.toStdString(), path.toStdString());
+   std::cout << "YY" << std::endl;
+   if(!patch.isValid()) {
+      return 0;
+   }
+
+   return 1;
+}
+
+// TODO: init input
+int DBM::Audio::start(QString inputDevice, int inputChannels, QString outputDevice, int outputChannels, int sampleRate){
+   this->inputChannels = 0;
+
+   int deviceId;
+   RtAudio::DeviceInfo outputDeviceInfo;
+   if(outputDevice == "default"){
+      deviceId = rtaudio.getDefaultOutputDevice();
+   }
+   else{
+      QString api = outputDevice.split(":")[0];
+      QString deviceIdStr = outputDevice.split(":")[1];
+      deviceId = deviceIdStr.toInt();
+   }
+
+   outputDeviceInfo = rtaudio.getDeviceInfo(deviceId);
+   if(outputChannels > outputDeviceInfo.outputChannels){
+      this->outputChannels = outputDeviceInfo.outputChannels;
+   }
+   else{
+      this->outputChannels = outputChannels;
+   }
+
+   std::cout << outputDeviceInfo.name << std::endl;
 
    // Choose the sample rate closer to the requested
-   std::vector<unsigned int> sampleRates = device.sampleRates;
+   std::vector<unsigned int> sampleRates = outputDeviceInfo.sampleRates;
    int diff = INT_MAX;
-   int sampleRate = INT_MAX;
+   int actualSampleRate = INT_MAX;
    for(size_t i=0; i<sampleRates.size(); i++){
-      if( abs(sampleRates.at(i) - requestedSampleRate) < diff){
-         diff = abs(sampleRates.at(i) - requestedSampleRate);
-         sampleRate = sampleRates.at(i);
+      if( abs(sampleRates.at(i) - sampleRate) < diff){
+         diff = abs(sampleRates.at(i) - sampleRate);
+         actualSampleRate = sampleRates.at(i);
       }
    }
+   this->sampleRate = actualSampleRate;
 
-
-
-   // Input channels
-   int inChannels = 0;
-   if(inputEnabled){
-      inChannels = numberChannels;
-      if(inChannels > device.inputChannels){
-         inChannels = device.inputChannels; 
-      }
-   }
-
-   // Init PD
-   puredata.init(inChannels,numberChannels,sampleRate);
-   Externals::init();
-
-   //int i = rtaudio.getDefaultOutputDevice();
-   //RtAudio::DeviceInfo info = rtaudio.getDeviceInfo(i);
-   //std::cout << info.name << std::endl;
-   //std::cout << info.outputChannels << std::endl;
-
-
-   // i = rtaudio.getDefaultInputDevice();
-   // info = rtaudio.getDeviceInfo(i);
-   // std::cout << info.name << std::endl;
+   std::cout << "O" << std::endl;
 
    // Initialize audio
    blockSize = 512;
    RtAudio::StreamParameters outputParams;
-   outputParams.deviceId = rtaudio.getDefaultOutputDevice();
-   outputParams.nChannels = numberChannels;
+   outputParams.deviceId = deviceId;
+   outputParams.nChannels = this->outputChannels;
 
-   RtAudio::StreamParameters inputParams;
-   inputParams.deviceId = rtaudio.getDefaultInputDevice();
-   inputParams.nChannels = inChannels;
+   std::cout << "P" << std::endl;
 
    RtAudio::StreamOptions options;
    // options.flags = RTAUDIO_SCHEDULE_REALTIME | RTAUDIO_MINIMIZE_LATENCY;
    options.flags = RTAUDIO_SCHEDULE_REALTIME;
    try {
-      if(inputEnabled){
-         rtaudio.openStream( &outputParams, &inputParams, RTAUDIO_FLOAT32, sampleRate, &blockSize, &audioCallback, NULL, &options, NULL);
-      }
-      else{
-         rtaudio.openStream( &outputParams, NULL, RTAUDIO_FLOAT32, sampleRate, &blockSize, &audioCallback, NULL, &options, NULL);
-      }
+      rtaudio.openStream( &outputParams, NULL, RTAUDIO_FLOAT32, this->sampleRate, &blockSize, &audioCallback, this, &options, NULL);
       rtaudio.startStream();
    }
    catch ( RtAudioError& e ) {
       std::cerr << '\n' << e.getMessage() << '\n' << std::endl;
       return 0;
    }
-*/
+
+   std::cout << "Q" << std::endl;
+
+   if(!puredata.isInited()){
+      std::cout << "R" << std::endl;
+      puredata.init(this->inputChannels, this->outputChannels, this->sampleRate);
+      std::cout << "S" << std::endl;
+      if(firstTime){
+
+         std::cout << "T" << std::endl;
+         Externals::init();
+         firstTime = false;
+      }
+   }
 
    return 1;
 }
@@ -226,6 +233,11 @@ int DBM::Audio::start(int requestedSampleRate, int numberChannels, bool inputEna
 int DBM::Audio::stop(){
    if(rtaudio.isStreamRunning()) rtaudio.stopStream();
    if(rtaudio.isStreamOpen()) rtaudio.closeStream();
-   if(puredata.isInited()) puredata.clear();
+   sleep(1);
+   if(puredata.isInited()){
+      puredata.closePatch(patch);
+      puredata.clearMessages();
+      puredata.clear();
+   } 
    return 1;
 };

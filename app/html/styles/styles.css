@@ -166,16 +166,11 @@ button {
    height: auto;
 }
 
-#configure-speakers-btn{
-   display: none;
-}
-
 #configure-speakers-btn a{
    cursor: pointer;
 }
 
 #configure-speakers{
-   display: none;
    background: url('img/speaker-arrangement.png') no-repeat bottom center;
    width: 280px;
    height: 320px; 

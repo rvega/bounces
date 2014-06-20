@@ -1,7 +1,7 @@
 define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/slider'], function(Listener, Source, Knob, Slider){
 
    NO_PD = false;
-   //NO_PD = true;
+   // NO_PD = true;
 
    var AppController = function(){
       this.stageWidth = 600;
@@ -10,6 +10,7 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
       this.initStage();
       this.initArrowKeys();
       this.initSoundOutputControls();
+      
       this.initPD(function(){
          this.initUIControls();
          this.initSources();
@@ -31,7 +32,7 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
       }
 
       // Init PureData engine and load patch.
-      PD.configurePlayback(44100, 4, false, false, function(){
+      PD.startAudio('default', 0, 'default', 4, 44100, false, function(){
          PD.openFile('pd', 'sound-space-no-gui.pd', function(){
             PD.setActive(true);
             callback();
@@ -671,12 +672,93 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
    }
 
    ///////////////////////////////////////////////////////////////////////////////// 
-   // Sound Output
+   // Sound Output Options
    AppController.prototype.initSoundOutputControls = function(){
-      this.speakerConfigVisible = false;
+      PD.getAudioDevices(function(devices){
+         // console.log(JSON.stringify(devices));
+         devices = devices['devices'];
+         for(var i=0; i<devices.length; i++){
+            var device = devices[i];
+            
+            if(device.outputChannels == 0){
+               continue;
+            }
+   
+            var apiName;
+            if(device.api == "CORE") apiName="Core Audio";
+            else if(device.api == "DS") apiName="Direct Sound";
+            else if(device.api == "ASIO") apiName="Asio";
+
+            var value = device.api + ":" + device.id; 
+            var string = device.name + " (" + apiName + ")"; 
+            var html = '<option value="'+ value +'">'+ string +'</option>';
+            $('#sound-devices').append(html);
+         }
+
+         PD.getDefaultOutputDevice(function(device){
+            var value = device.api + ":" + device.id; 
+            $('#sound-devices').val(value);
+         })
+      });
+
+      this.soundConfigVisible = false;
+      $('#sound-devices').on('change', this.changeSoundDevice.bind(this));
+      $('#show-output-config-btn').on('click', this.showOutputConfigBtnClicked.bind(this));
       $('.sound-output input:radio').on('change', this.radioSpeakersChanged.bind(this));
-      $('#configure-speakers-btn').on('click', this.configureSpeakersBtnClicked.bind(this));
       $('#speaker-fl, #speaker-fr, #speaker-bl, #speaker-br').on('click', this.clickedSpeaker.bind(this));
+   };
+
+   AppController.prototype.changeSoundDevice = function(e){
+      var device = $(e.currentTarget).val();
+     PD.stopAudio(function(){
+        console.log('1')
+         PD.startAudio('default',0,device,4,44100,false,function(){
+            console.log('2')
+            PD.openFile('pd', 'sound-space-no-gui.pd', function(){
+               console.log('3')
+               PD.setActive(true);
+            });
+         });
+      })
+   };
+
+   AppController.prototype.showOutputConfigBtnClicked = function(e){
+      if(this.soundConfigVisible){
+         this.soundConfigVisible = false;
+         this.hideOutputConfig();
+      }
+      else{
+         this.soundConfigVisible = true;
+         this.showOutputConfig();
+      }
+   };
+
+   AppController.prototype.showOutputConfig = function(){
+      $('#sound-output-config').show();
+      $('#show-output-config-btn').html('Hide sound output controls.');
+      $('.selected-source.controls').hide();
+      $('.reverb.controls').hide();
+      $('.space.controls').hide();
+      $('.music.controls').hide();
+   };
+
+   AppController.prototype.hideOutputConfig = function(){
+      $('#sound-output-config').hide();
+      $('#show-output-config-btn').html('Show sound output controls.');
+      $('.selected-source.controls').show();
+      $('.reverb.controls').show();
+      $('.space.controls').show();
+      $('.music.controls').show();
+   };
+  
+   AppController.prototype.radioSpeakersChanged = function(e){
+      var value = $(e.currentTarget).val();
+      if(value==4){
+         PD.sendFloat(1, 'quadraphonic');
+      }
+      else{
+         PD.sendFloat(0, 'quadraphonic');
+      }
    };
 
    AppController.prototype.clickedSpeaker = function(e){
@@ -695,50 +777,6 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
          message = '3';
       }
       PD.sendFloat(message, 'test');
-   };
-
-   AppController.prototype.radioSpeakersChanged = function(e){
-
-      var value = $(e.currentTarget).val();
-      console.log(value);
-      if(value==4){
-         $('#configure-speakers-btn').show();
-      }
-      else{
-         $('#configure-speakers-btn').hide();
-         this.hideSpeakerConfig();
-         this.speakerConfigVisible = false;
-      }
-   };
-
-   AppController.prototype.configureSpeakersBtnClicked = function(e){
-      if(this.speakerConfigVisible){
-         this.hideSpeakerConfig();
-         this.speakerConfigVisible = false;
-      }
-      else{
-         this.showSpeakerConfig();
-         this.speakerConfigVisible = true;
-      }
-   };
-
-   AppController.prototype.showSpeakerConfig = function(){
-      PD.sendList(['stop'], 'play');
-      $('#configure-speakers-btn a').html('Done configuring speakers.');
-      $('.selected-source.controls').hide();
-      $('.reverb.controls').hide();
-      $('.space.controls').hide();
-      $('.music.controls').hide();
-      $('#configure-speakers').show();
-   };
-
-   AppController.prototype.hideSpeakerConfig = function(){
-      $('#configure-speakers-btn a').html('Configure speakers.');
-      $('.selected-source.controls').show();
-      $('.reverb.controls').show();
-      $('.space.controls').show();
-      $('.music.controls').show();
-      $('#configure-speakers').hide();
    };
 
    return AppController;

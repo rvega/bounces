@@ -55,17 +55,33 @@
 
       <div class="sound-output controls">
          <h2>Sound Output</h2>
-         <p>
-            <input type="radio" id="num_channels_2" name="num_channels" value="2" checked /><label for="num_channels_2">Headphones</label>
-            <input type="radio" id="num_channels_4" name="num_channels" value="4" /><label for="num_channels_4">Quadraphonic</label>
-         </p>
-         <p id="configure-speakers-btn"><a href="#">Configure speakers</a></p>
-         <div id="configure-speakers">
-             <p>You should use a speaker arrangement as the one showed in the image. Click on the speaker icons to identify sound output channels.</p>
-             <a class="speaker" id="speaker-fl"></a>
-             <a class="speaker" id="speaker-fr"></a>
-             <a class="speaker" id="speaker-br"></a>
-             <a class="speaker" id="speaker-bl"></a>
+         <p><a id="show-output-config-btn" href="#">Show sound output controls.</a></p>
+         <div class="hidden" id="sound-output-config">
+            <p>
+               <label for="sound-devices">Output Device:</label>
+               <select id="sound-devices">
+                  <!-- <option value ="1">LALALA (ASIO)</option> -->
+                  <!-- <option value ="2">LALALA (ASIO)</option> -->
+               </select>
+               <br />
+               <label for="sample-rates">Sample Rate:</label>
+               <select id="sample-rates">
+                  <option value ="44100">44100</option>
+               </select>
+            </p>
+
+            <p>
+               <input type="radio" id="num_channels_2" name="num_channels" value="2" checked /><label for="num_channels_2">Headphones</label>
+               <input type="radio" id="num_channels_4" name="num_channels" value="4" /><label for="num_channels_4">Quadraphonic</label>
+            </p>
+
+            <div id="configure-speakers">
+               <p>For quadraphonic output, use a speaker arrangement as the one in the image. Click on the speaker icons to identify sound output channels.</p>
+               <a class="speaker" id="speaker-fl"></a>
+               <a class="speaker" id="speaker-fr"></a>
+               <a class="speaker" id="speaker-br"></a>
+               <a class="speaker" id="speaker-bl"></a>
+            </div>
          </div>
       </div>
 
@@ -77,11 +93,10 @@
          </p>
       </div>
 
-      <div id="buttons">
-         <button type="button" id="save-btn" class="hidden">Save</button>
-         <button type="button" id="load-btn" class="hidden">Load</button>
-         <!-- <input type="file" id="load-file" /> -->
-      </div>
+      <!-- <div id="buttons"> -->
+      <!--    <button type="button" id="save-btn" class="hidden">Save</button> -->
+      <!--    <button type="button" id="load-btn" class="hidden">Load</button> -->
+      <!-- </div> -->
 
       <div id="credits" class="clear">
          Concept and composition by Marco Alunno (www.marcoalunno.com).<br/>

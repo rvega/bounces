@@ -43,7 +43,10 @@ namespace DBM{
          void timerTick();
 
       public slots: 
-         void configurePlayback(int sampleRate, int numberChannels, bool inputEnabled, bool mixingEnabled, int callbackId);
+         void getDefaultOutputDevice(int callbackId);
+         void getAudioDevices(int callbackId);
+         void stopAudio(int callbackId);
+         void startAudio(QString inputDevice, int inputChannels, QString outputDevice, int outputChannels, int sampleRate, bool mixingEnabled, int callbackId);
          void openFile(QString path, QString fileName, int callbackId);
          void setActive(bool active);
          void sendBang(QString receiver);

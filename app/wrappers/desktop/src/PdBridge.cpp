@@ -6,7 +6,6 @@
 
 #include "PdBridge.h"
 
-
 DBM::PdBridge::PdBridge(QObject* parent) : QObject(parent){
    audio = new Audio();
    Audio::puredata.setReceiver(this);
@@ -14,7 +13,6 @@ DBM::PdBridge::PdBridge(QObject* parent) : QObject(parent){
    timer = new QTimer(this);
    timer->setTimerType(Qt::PreciseTimer);
    connect(timer, SIGNAL(timeout()), this, SLOT(timerTick()));
-   timer->start(1);
 }
 
 DBM::PdBridge::~PdBridge(){
@@ -29,19 +27,38 @@ void DBM::PdBridge::setPage(WebPage* page){
 // The following methods can be called from Javascript as members of a global
 // object called QT. Ex: QT.configurePlayback(...).
 
+void DBM::PdBridge::getDefaultOutputDevice(int callbackId){
+   QVariantMap device = DBM::Audio::getDefaultOutputDevice();
+   emit fireOKCallback(callbackId, device);
+}
 
-void DBM::PdBridge::configurePlayback(int sampleRate, int numberChannels, bool inputEnabled, bool mixingEnabled, int callbackId){
+void DBM::PdBridge::getAudioDevices(int callbackId){
+   QVariantMap devices = DBM::Audio::getDevices();
+   emit fireOKCallback(callbackId, devices);
+}
+
+void DBM::PdBridge::stopAudio(int callbackId){
+   timer->stop();
+   audio->stop();
+
+   QVariantMap params;
+   emit fireOKCallback(callbackId, params);
+}
+
+void DBM::PdBridge::startAudio(QString inputDevice, int inputChannels, QString outputDevice, int outputChannels, int sampleRate, bool mixingEnabled, int callbackId){
    
-   if(!audio->start(sampleRate, numberChannels, inputEnabled)){
+   if(!audio->start(inputDevice, inputChannels, outputDevice, outputChannels, sampleRate)){
       emit fireErrorCallback(callbackId+1, "Could not start audio engine.");
       return;
    }
 
    QVariantMap params;
    params["sampleRate"] = QVariant(audio->getSampleRate());
-   params["numberChannels"] = QVariant(numberChannels);
-   params["inputEnabled"] = QVariant(inputEnabled);
+   params["inputCaannels"] = QVariant(audio->getInputChannels());
+   params["outputChannels"] = QVariant(audio->getOutputChannels());
    params["mixingEnabled"] = QVariant(mixingEnabled);
+
+   timer->start(1);
 
    emit fireOKCallback(callbackId, params);
 
@@ -50,13 +67,11 @@ void DBM::PdBridge::configurePlayback(int sampleRate, int numberChannels, bool i
 
 
 void DBM::PdBridge::openFile(QString path, QString fileName, int callbackId){
-   std::cout << "OpenFile" << std::endl;
-   path = QApplication::applicationDirPath() + "/res/" + path;
-   pd::Patch patch = Audio::puredata.openPatch(fileName.toStdString(), path.toStdString());
-   if(!patch.isValid()) {
+   if(!audio->openPatch(path, fileName)){
       fireErrorCallback(callbackId+1, "Could not open patch");
       return;
    }
+
    QVariantMap params;
    fireOKCallback(callbackId, params);
 }
