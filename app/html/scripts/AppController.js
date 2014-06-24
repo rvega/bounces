@@ -4,9 +4,6 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
    // NO_PD = true;
 
    var AppController = function(){
-      this.stageWidth = 600;
-      this.stageHeight = 600;
-
       this.initStage();
       this.initArrowKeys();
       this.initSoundOutputControls();
@@ -45,6 +42,9 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
 
 
    AppController.prototype.initStage = function(){
+      this.stageWidth = 600;
+      this.stageHeight = 600;
+
       $('#stage').attr('width', this.stageWidth).attr('height', this.stageHeight);
       this.stage = new fabric.Canvas('stage',{
          backgroundColor: '#EEE'
@@ -184,6 +184,7 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
    // Knobs and Buttons
 
    AppController.prototype.initUIControls = function(){
+      this.playheadPosition = 0;
       this.UIElements = [];
 
       // Music Controls
@@ -343,7 +344,12 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
    };
 
    AppController.prototype.play = function(e){
-      PD.sendList(['resume'], 'play');
+      if(this.playheadPosition==0 || this.playheadPosition==596){
+         PD.sendList(['resume'], 'play');
+      }
+      else{
+         PD.sendList(['start'], 'play');
+      }
    };
 
    AppController.prototype.pause = function(e){
@@ -355,6 +361,7 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
       clearTimeout(this.seekTimer);
       this.seekTimer = setTimeout(function(){
          var value = Number($(e.currentTarget).slider('getValue')) * 600;
+         this.playheadPosition = value;
          value = Math.round(value);
          PD.sendList(['seek', String(value)], 'play');
          this.seeking = false;
@@ -711,11 +718,8 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
    AppController.prototype.changeSoundDevice = function(e){
       var device = $(e.currentTarget).val();
      PD.stopAudio(function(){
-        console.log('1')
          PD.startAudio('default',0,device,4,44100,false,function(){
-            console.log('2')
             PD.openFile('pd', 'sound-space-no-gui.pd', function(){
-               console.log('3')
                PD.setActive(true);
             });
          });
