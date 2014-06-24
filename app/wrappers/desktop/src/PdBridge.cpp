@@ -10,9 +10,9 @@ DBM::PdBridge::PdBridge(QObject* parent) : QObject(parent){
    audio = new Audio();
    Audio::puredata.setReceiver(this);
 
-   timer = new QTimer(this);
-   timer->setTimerType(Qt::PreciseTimer);
-   connect(timer, SIGNAL(timeout()), this, SLOT(timerTick()));
+   // timer = new QTimer(this);
+   // timer->setTimerType(Qt::PreciseTimer);
+   // connect(timer, SIGNAL(timeout()), this, SLOT(timerTick()));
 }
 
 DBM::PdBridge::~PdBridge(){
@@ -38,7 +38,7 @@ void DBM::PdBridge::getAudioDevices(int callbackId){
 }
 
 void DBM::PdBridge::stopAudio(int callbackId){
-   timer->stop();
+   // timer->stop();
    audio->stop();
 
    QVariantMap params;
@@ -58,7 +58,7 @@ void DBM::PdBridge::startAudio(QString inputDevice, int inputChannels, QString o
    params["outputChannels"] = QVariant(audio->getOutputChannels());
    params["mixingEnabled"] = QVariant(mixingEnabled);
 
-   timer->start(1);
+   // timer->start(1);
 
    emit fireOKCallback(callbackId, params);
 
@@ -151,9 +151,9 @@ void DBM::PdBridge::receiveMessage(const std::string& dest, const std::string& m
 // Timer to request messages from pd (so that methods above are triggered)
 // 
 
-void DBM::PdBridge::timerTick(){
-   Audio::puredata.receiveMessages();
-}
+// void DBM::PdBridge::timerTick(){
+   // Audio::puredata.receiveMessages();
+// }
 
 /*
 

@@ -7,6 +7,8 @@
 // define the static property puredata of type PdBase
 pd::PdBase DBM::Audio::puredata;
 
+float buffer[2048]; // 512 block size * 4 channels
+
 int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames, double streamTime, RtAudioStreamStatus status, void *data){
 
    if (status!=0) {
@@ -21,7 +23,10 @@ int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int nBufferFra
    // if(DBM::Audio::puredata.isInited()){
       // Puredata processes in ticks of 64 samples
       int ticks = nBufferFrames/64;
-      DBM::Audio::puredata.processFloat(ticks, in, out);
+      DBM::Audio::puredata.processFloat(ticks, in, buffer);
+
+      memcpy(out, buffer, audio->getOutputChannels() * sizeof(float));
+
    // }
    // else{
    //    int numSamples = nBufferFrames * audio->getOutputChannels();
@@ -44,6 +49,10 @@ DBM::Audio::Audio(){
 
 DBM::Audio::~Audio(){
    this->stop();
+
+   if(puredata.isInited()){
+      puredata.clear();
+   } 
 }
 
 
@@ -134,7 +143,7 @@ QVariantMap DBM::Audio::getDevices(){
          }
          k++;
       }
-      delete rta;
+      // delete rta;
    }
 
    result["devices"] = devices;
@@ -142,11 +151,16 @@ QVariantMap DBM::Audio::getDevices(){
 }
 
 int DBM::Audio::openPatch(QString path, QString file){
+   if(!puredata.isInited()){
+      puredata.init(this->inputChannels, this->outputChannels, this->sampleRate);
+      if(firstTime){
+         Externals::init();
+         firstTime = false;
+      }
+   }
 
    path = QApplication::applicationDirPath() + "/res/" + path;
-   std::cout << "XX" << std::endl;
    patch = puredata.openPatch(file.toStdString(), path.toStdString());
-   std::cout << "YY" << std::endl;
    if(!patch.isValid()) {
       return 0;
    }
@@ -177,8 +191,6 @@ int DBM::Audio::start(QString inputDevice, int inputChannels, QString outputDevi
       this->outputChannels = outputChannels;
    }
 
-   std::cout << outputDeviceInfo.name << std::endl;
-
    // Choose the sample rate closer to the requested
    std::vector<unsigned int> sampleRates = outputDeviceInfo.sampleRates;
    int diff = INT_MAX;
@@ -191,15 +203,11 @@ int DBM::Audio::start(QString inputDevice, int inputChannels, QString outputDevi
    }
    this->sampleRate = actualSampleRate;
 
-   std::cout << "O" << std::endl;
-
    // Initialize audio
    blockSize = 512;
    RtAudio::StreamParameters outputParams;
    outputParams.deviceId = deviceId;
    outputParams.nChannels = this->outputChannels;
-
-   std::cout << "P" << std::endl;
 
    RtAudio::StreamOptions options;
    // options.flags = RTAUDIO_SCHEDULE_REALTIME | RTAUDIO_MINIMIZE_LATENCY;
@@ -213,31 +221,11 @@ int DBM::Audio::start(QString inputDevice, int inputChannels, QString outputDevi
       return 0;
    }
 
-   std::cout << "Q" << std::endl;
-
-   if(!puredata.isInited()){
-      std::cout << "R" << std::endl;
-      puredata.init(this->inputChannels, this->outputChannels, this->sampleRate);
-      std::cout << "S" << std::endl;
-      if(firstTime){
-
-         std::cout << "T" << std::endl;
-         Externals::init();
-         firstTime = false;
-      }
-   }
-
    return 1;
 }
 
 int DBM::Audio::stop(){
    if(rtaudio.isStreamRunning()) rtaudio.stopStream();
    if(rtaudio.isStreamOpen()) rtaudio.closeStream();
-   sleep(1);
-   if(puredata.isInited()){
-      puredata.closePatch(patch);
-      puredata.clearMessages();
-      puredata.clear();
-   } 
    return 1;
 };

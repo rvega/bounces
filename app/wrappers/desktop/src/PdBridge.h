@@ -2,7 +2,7 @@
 
 #include <QObject>
 #include <QVariantMap>
-#include <QTimer>
+// #include <QTimer>
 #include "WebPage.h"
 #include "Audio.h"
 
@@ -26,7 +26,7 @@ namespace DBM{
       protected:
          WebPage* page;
          Audio* audio;
-         QTimer* timer;
+         // QTimer* timer;
 
       signals:
          // To tell JS to execute a success callback, do fireOKCallback(cbID, params),
@@ -40,7 +40,7 @@ namespace DBM{
          // virtual void receiveMessage(QString dest, const std::string& msg, const pd::List& list);
 
       private slots: 
-         void timerTick();
+         // void timerTick();
 
       public slots: 
          void getDefaultOutputDevice(int callbackId);

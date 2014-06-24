@@ -214,6 +214,7 @@ win32{
 libpd_dir = "vendors/libpd"
 macx{
    libpd_lib = $$libpd_dir/build/Release/libpd-osx.a
+   # libpd_lib = $$libpd_dir/libs/libpd.dylib
    libpd.commands = cd $$libpd_dir && xcodebuild -project libpd.xcodeproj -target libpd-osx -configuration Release
 }
 win32{
