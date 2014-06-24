@@ -29,13 +29,19 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
       }
 
       // Init PureData engine and load patch.
-      PD.startAudio('default', 0, 'default', 4, 44100, false, function(){
+      PD.startAudio('default', 0, 'default', 2, 44100, false, function(){
          PD.openFile('pd', 'sound-space-no-gui.pd', function(){
             PD.setActive(true);
+            console.log('wata');
             callback();
          });
       });
    };
+
+   AppController.prototype.bindPDMessages = function(){
+      PD.bind('playhead', this.playhead.bind(this));
+      PD.bind('levels',this.receivedSoundLevels.bind(this)); 
+   }
 
    ///////////////////////////////////////////////////////////////////////////////// 
    // Stage 
@@ -682,7 +688,6 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
    // Sound Output Options
    AppController.prototype.initSoundOutputControls = function(){
       PD.getAudioDevices(function(devices){
-         // console.log(JSON.stringify(devices));
          devices = devices['devices'];
          for(var i=0; i<devices.length; i++){
             var device = devices[i];
@@ -718,7 +723,8 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
    AppController.prototype.changeSoundDevice = function(e){
       var device = $(e.currentTarget).val();
      PD.stopAudio(function(){
-         PD.startAudio('default',0,device,4,44100,false,function(){
+        // console.log(device);
+         PD.startAudio('default',0,device,2,44100,false,function(){
             PD.openFile('pd', 'sound-space-no-gui.pd', function(){
                PD.setActive(true);
             });
@@ -781,6 +787,7 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
          message = '3';
       }
       PD.sendFloat(message, 'test');
+      PD.sendList(['stop'], 'play');
    };
 
    return AppController;

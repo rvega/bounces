@@ -4,6 +4,8 @@
 #include <PdBase.hpp>
 #include <QVariant>
 
+#include "PdBridge.h"
+
 namespace DBM{
    class Audio{
       public:
@@ -11,7 +13,7 @@ namespace DBM{
          static QVariantMap getDefaultOutputDevice();
          static QVariantMap getDevices();
 
-         explicit Audio();
+         explicit Audio(PdBridge* brdg);
          virtual ~Audio();
 
          int openPatch(QString path, QString file);
@@ -22,6 +24,7 @@ namespace DBM{
          unsigned int getOutputChannels();
 
       protected: 
+         PdBridge* bridge;
          RtAudio::DeviceInfo chooseDevice(int outputChannels);
          unsigned int sampleRate;
          unsigned int inputChannels;

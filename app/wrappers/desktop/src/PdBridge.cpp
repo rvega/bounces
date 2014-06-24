@@ -3,11 +3,12 @@
 #include <QMap>
 #include <QApplication>
 #include <PdTypes.hpp>
+#include "Audio.h"
 
 #include "PdBridge.h"
 
 DBM::PdBridge::PdBridge(QObject* parent) : QObject(parent){
-   audio = new Audio();
+   audio = new Audio(this);
    Audio::puredata.setReceiver(this);
 
    // timer = new QTimer(this);
@@ -119,7 +120,6 @@ void DBM::PdBridge::bind(QString sender){
 // patch
 
 void DBM::PdBridge::print(const std::string& message){
-   std::cout << "PD: " << message << std::endl;
 }
    
 void DBM::PdBridge::receiveBang(const std::string& dest){
@@ -140,7 +140,7 @@ void DBM::PdBridge::receiveList(const std::string& dest, const pd::List& list){
 }
 
 void DBM::PdBridge::receiveMessage(const std::string& dest, const std::string& msg, const pd::List& list){
-   std::cout << "DBM::PdBridge::receiveMessage is unimplemented." << std::endl;
+   std::cerr << "DBM::PdBridge::receiveMessage is unimplemented." << std::endl;
    (void)dest;
    (void)list;
    (void)msg;

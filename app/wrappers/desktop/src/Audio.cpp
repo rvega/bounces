@@ -7,52 +7,58 @@
 // define the static property puredata of type PdBase
 pd::PdBase DBM::Audio::puredata;
 
-float buffer[2048]; // 512 block size * 4 channels
+float bufferIn[2048]; // 512 block size * 4 channels
+float bufferOut[2048]; // 512 block size * 4 channels
 
 int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames, double streamTime, RtAudioStreamStatus status, void *data){
 
-   if (status!=0) {
-      std::cerr << "Stream over/underflow detected." << std::endl;
-   }
+   // if (status!=0) {
+   //    std::cerr << "Stream over/underflow detected." << std::endl;
+   // }
 
    DBM::Audio* audio = (DBM::Audio*)data;
-
    float* out = (float*)outputBuffer;
    float* in = (float*)inputBuffer;
 
-   // if(DBM::Audio::puredata.isInited()){
-      // Puredata processes in ticks of 64 samples
-      int ticks = nBufferFrames/64;
-      DBM::Audio::puredata.processFloat(ticks, in, buffer);
+   int ticks = nBufferFrames/64;
+   DBM::Audio::puredata.processFloat(ticks, in, out);
 
-      memcpy(out, buffer, audio->getOutputChannels() * sizeof(float));
-
-   // }
-   // else{
-   //    int numSamples = nBufferFrames * audio->getOutputChannels();
-   //    for(int i=0; i<numSamples; i++){
-   //       out[i] = 0; 
+   // Copy channel 0 and 1 from quad buffer to stereo out
+   // if(audio->getOutputChannels() == 2){
+   //    DBM::Audio::puredata.processFloat(ticks, bufferIn, bufferOut);
+   //    int j=0;
+   //    int k=0;
+   //    for(int i=0; i<nBufferFrames*4; i++){
+   //       if(k==0 || k==1){
+   //          out[j] = bufferOut[i]; 
+   //          j++;
+   //          k++;
+   //       }
+   //       else if(k==2){
+   //          k++; 
+   //       }
+   //       else if(k==3){
+   //          k=0; 
+   //       }
    //    }
    // }
+   // else{
+      // DBM::Audio::puredata.processFloat(ticks, in, out);
+  // }
 
    return 0;
 
    (void)streamTime;
-   (void)status;
-   (void)data;
 }
 
 
-DBM::Audio::Audio(){ 
+DBM::Audio::Audio(PdBridge* brdg){ 
+   this->bridge = brdg;
    firstTime = true;
 }
 
 DBM::Audio::~Audio(){
    this->stop();
-
-   if(puredata.isInited()){
-      puredata.clear();
-   } 
 }
 
 
@@ -151,13 +157,13 @@ QVariantMap DBM::Audio::getDevices(){
 }
 
 int DBM::Audio::openPatch(QString path, QString file){
-   if(!puredata.isInited()){
-      puredata.init(this->inputChannels, this->outputChannels, this->sampleRate);
-      if(firstTime){
-         Externals::init();
-         firstTime = false;
-      }
-   }
+   // if(!puredata.isInited()){
+   //    puredata.init(0, 2, this->sampleRate);
+   //    if(firstTime){
+   //       Externals::init();
+   //       firstTime = false;
+   //    }
+   // }
 
    path = QApplication::applicationDirPath() + "/res/" + path;
    patch = puredata.openPatch(file.toStdString(), path.toStdString());
@@ -221,11 +227,28 @@ int DBM::Audio::start(QString inputDevice, int inputChannels, QString outputDevi
       return 0;
    }
 
+   if(!puredata.isInited()){
+      puredata.init(0, 2, this->sampleRate);
+      if(firstTime){
+         Externals::init();
+         firstTime = false;
+      }
+      puredata.setReceiver(bridge);
+   }
+
    return 1;
 }
 
 int DBM::Audio::stop(){
+   puredata.computeAudio(false);
+   puredata.closePatch(patch);
+
    if(rtaudio.isStreamRunning()) rtaudio.stopStream();
    if(rtaudio.isStreamOpen()) rtaudio.closeStream();
-   return 1;
-};
+
+   sleep(1);
+
+   if(puredata.isInited()){
+      puredata.clear();
+   } 
+   return 1; };

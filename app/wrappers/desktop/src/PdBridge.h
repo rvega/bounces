@@ -4,9 +4,11 @@
 #include <QVariantMap>
 // #include <QTimer>
 #include "WebPage.h"
-#include "Audio.h"
+#include <PdBase.hpp>
 
 namespace DBM{
+   class Audio;
+
    class PdBridge: public QObject, public pd::PdReceiver{
       Q_OBJECT
 
