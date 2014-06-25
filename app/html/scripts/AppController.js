@@ -29,12 +29,12 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
       }
 
       // Init PureData engine and load patch.
-      PD.startAudio('default', 0, 'default', 2, 44100, false, function(){
-         PD.openFile('pd', 'sound-space-no-gui.pd', function(){
-            PD.setActive(true);
-            console.log('wata');
-            callback();
-         });
+      PD.start({
+         patch:'sound-space-no-gui.pd'  
+      },function(params){
+         callback();
+      }, function(err){
+          console.log(err);
       });
    };
 
@@ -687,7 +687,10 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
    ///////////////////////////////////////////////////////////////////////////////// 
    // Sound Output Options
    AppController.prototype.initSoundOutputControls = function(){
+      this.audioDevices = {};
+
       PD.getAudioDevices(function(devices){
+         this.audioDevices = {};
          devices = devices['devices'];
          for(var i=0; i<devices.length; i++){
             var device = devices[i];
@@ -705,13 +708,24 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
             var string = device.name + " (" + apiName + ")"; 
             var html = '<option value="'+ value +'">'+ string +'</option>';
             $('#sound-devices').append(html);
+
+            this.audioDevices[value] = device;
          }
 
          PD.getDefaultOutputDevice(function(device){
             var value = device.api + ":" + device.id; 
             $('#sound-devices').val(value);
+
+            var channels = device.outputChannels >= 4 ? 4 : 2;
+            if(channels==4){
+               $('#num_channels_4').removeAttr('disabled');
+            }
+            else{
+               $('#num_channels_2').click();
+               $('#num_channels_4').attr('disabled', true);
+            }
          })
-      });
+      }.bind(this));
 
       this.soundConfigVisible = false;
       $('#sound-devices').on('change', this.changeSoundDevice.bind(this));
@@ -721,15 +735,34 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
    };
 
    AppController.prototype.changeSoundDevice = function(e){
-      var device = $(e.currentTarget).val();
-     PD.stopAudio(function(){
-        // console.log(device);
-         PD.startAudio('default',0,device,2,44100,false,function(){
-            PD.openFile('pd', 'sound-space-no-gui.pd', function(){
-               PD.setActive(true);
-            });
+      var deviceId = $(e.currentTarget).val();
+      var device = this.audioDevices[deviceId];
+      var channels = device.outputChannels >= 4 ? 4 : 2;
+
+      if(channels==4){
+         $('#num_channels_4').removeAttr('disabled');
+      }
+      else{
+         $('#num_channels_2').click();
+         $('#num_channels_4').attr('disabled', true);
+      }
+
+      var self = this;
+      PD.stop(function(){
+         PD.start({
+            patch:'sound-space-no-gui.pd',
+            outChannels: channels,
+            outDevice: deviceId,
+         },function(params){
+            self.bindPDMessages();
+            var data = self.gatherParametersFromUI();
+            self.setParametersFromPreset(data);
+         },function(err){
+            console.log(err);
          });
-      })
+      }, function(err){
+         console.log(err);
+      });
    };
 
    AppController.prototype.showOutputConfigBtnClicked = function(e){

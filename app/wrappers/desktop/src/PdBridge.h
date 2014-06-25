@@ -28,6 +28,8 @@ namespace DBM{
       protected:
          WebPage* page;
          Audio* audio;
+         bool initedExternals;
+         pd::Patch patch;
          // QTimer* timer;
 
       signals:
@@ -44,17 +46,29 @@ namespace DBM{
       private slots: 
          // void timerTick();
 
+      // The following methods can be called from Javascript as members of a global
+      // object called QT. Ex: QT.configurePlayback(...).
       public slots: 
-         void getDefaultOutputDevice(int callbackId);
-         void getAudioDevices(int callbackId);
-         void stopAudio(int callbackId);
-         void startAudio(QString inputDevice, int inputChannels, QString outputDevice, int outputChannels, int sampleRate, bool mixingEnabled, int callbackId);
-         void openFile(QString path, QString fileName, int callbackId);
+         // PD engine and files
+         void init(int inChannels, int outChannels, int sampleRate, int callbackId);
+         void clear(int callbackId);
+         void openPatch(QString path, QString fileName, int callbackId);
+         void closePatch(int callbackId);
+
+         // Send messages to PD
          void setActive(bool active);
          void sendBang(QString receiver);
          void sendNoteOn(int channel, int pitch, int velocity);
          void sendFloat(float num, QString receiver);
          void sendList(QVariantList list, QString receiver);
+
+         // Receive Messages from pd
          void bind(QString sender);
+         
+         // Audio devices
+         void getDefaultOutputDevice(int callbackId);
+         void getAudioDevices(int callbackId);
+         void stopAudio(int callbackId);
+         void startAudio(QString inputDevice, int inputChannels, QString outputDevice, int outputChannels, int sampleRate, bool mixingEnabled, int callbackId);
    };
 };

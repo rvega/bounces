@@ -3,13 +3,14 @@
 #include <QMap>
 #include <QApplication>
 #include <PdTypes.hpp>
-#include "Audio.h"
 
+#include "Audio.h"
 #include "PdBridge.h"
+#include "Externals.h"
 
 DBM::PdBridge::PdBridge(QObject* parent) : QObject(parent){
-   audio = new Audio(this);
-   Audio::puredata.setReceiver(this);
+   audio = new Audio();
+   initedExternals = false;
 
    // timer = new QTimer(this);
    // timer->setTimerType(Qt::PreciseTimer);
@@ -28,6 +29,65 @@ void DBM::PdBridge::setPage(WebPage* page){
 // The following methods can be called from Javascript as members of a global
 // object called QT. Ex: QT.configurePlayback(...).
 
+///////////////////////////////////////////////////////////
+// PD Engine and files
+//
+
+void DBM::PdBridge::init(int inChannels, int outChannels, int sampleRate, int callbackId){
+   if(!Audio::puredata.isInited()){
+      if(Audio::puredata.init(inChannels, outChannels, sampleRate)){
+         if(!initedExternals){
+            Externals::init();
+            initedExternals = true;
+         }
+         Audio::puredata.setReceiver(this);
+         // timer->start(1);
+
+         QVariantMap params;
+         fireOKCallback(callbackId, params);
+         return;
+      }
+   }
+
+   fireErrorCallback(callbackId+1, "Could not init PD engine");
+}
+
+void DBM::PdBridge::clear(int callbackId){
+   if(Audio::puredata.isInited()){
+      Audio::puredata.clear(); 
+      // timer->stop();
+
+      QVariantMap params;
+      fireOKCallback(callbackId, params);
+      return;
+   }
+
+   fireErrorCallback(callbackId+1, "Could not clear PD engine");
+}
+
+void DBM::PdBridge::openPatch(QString path, QString fileName, int callbackId){
+   path = QApplication::applicationDirPath() + "/res/" + path;
+   patch = Audio::puredata.openPatch(fileName.toStdString(), path.toStdString());
+   if(!patch.isValid()) {
+      fireErrorCallback(callbackId+1, "Could not open patch " + path + "/" + fileName);
+      return;
+   }
+
+   QVariantMap params;
+   fireOKCallback(callbackId, params);
+}
+
+void DBM::PdBridge::closePatch(int callbackId){
+   Audio::puredata.closePatch(patch);
+
+   QVariantMap params;
+   fireOKCallback(callbackId, params);
+}
+
+///////////////////////////////////////////////////////////
+// Audio devices
+//
+
 void DBM::PdBridge::getDefaultOutputDevice(int callbackId){
    QVariantMap device = DBM::Audio::getDefaultOutputDevice();
    emit fireOKCallback(callbackId, device);
@@ -39,7 +99,6 @@ void DBM::PdBridge::getAudioDevices(int callbackId){
 }
 
 void DBM::PdBridge::stopAudio(int callbackId){
-   // timer->stop();
    audio->stop();
 
    QVariantMap params;
@@ -58,24 +117,12 @@ void DBM::PdBridge::startAudio(QString inputDevice, int inputChannels, QString o
    params["inputCaannels"] = QVariant(audio->getInputChannels());
    params["outputChannels"] = QVariant(audio->getOutputChannels());
    params["mixingEnabled"] = QVariant(mixingEnabled);
-
-   // timer->start(1);
-
    emit fireOKCallback(callbackId, params);
-
-   (void)sampleRate;
 }
 
-
-void DBM::PdBridge::openFile(QString path, QString fileName, int callbackId){
-   if(!audio->openPatch(path, fileName)){
-      fireErrorCallback(callbackId+1, "Could not open patch");
-      return;
-   }
-
-   QVariantMap params;
-   fireOKCallback(callbackId, params);
-}
+///////////////////////////////////////////////////////////
+// Send messages to PD
+//
 
 void DBM::PdBridge::setActive(bool active){
    Audio::puredata.computeAudio(active);
@@ -120,6 +167,7 @@ void DBM::PdBridge::bind(QString sender){
 // patch
 
 void DBM::PdBridge::print(const std::string& message){
+   std::cout << "PD: " << message << std::endl;
 }
    
 void DBM::PdBridge::receiveBang(const std::string& dest){
