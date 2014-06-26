@@ -7,6 +7,7 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
       this.initStage();
       this.initArrowKeys();
       this.initSoundOutputControls();
+      this.initCredits();
       
       this.initPD(function(){
          this.initUIControls();
@@ -43,6 +44,21 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
       PD.bind('levels',this.receivedSoundLevels.bind(this)); 
    }
 
+   ///////////////////////////////////////////////////////////////////////////////// 
+   // Credits
+   AppController.prototype.initCredits = function(){
+      $('#open-credits-btn').on('click', this.openCredits.bind(this));
+      $('#close-credits-btn').on('click', this.closeCredits.bind(this));
+   },
+
+   AppController.prototype.openCredits = function(){
+      $('#credits-popup').show();
+   },
+
+   AppController.prototype.closeCredits = function(){
+      $('#credits-popup').hide();
+   },
+   
    ///////////////////////////////////////////////////////////////////////////////// 
    // Stage 
 
@@ -699,7 +715,7 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
                continue;
             }
    
-            var apiName;
+            var apiName = "";
             if(device.api == "CORE") apiName="Core Audio";
             else if(device.api == "DS") apiName="Direct Sound";
             else if(device.api == "ASIO") apiName="Asio";

@@ -46,8 +46,8 @@ SOURCES += $$HOA/Sources/hoaOptim/AmbisonicOptim.cpp
 
 # vorbis library
 vorbis_dir = app/vendors/libvorbis
-vorbis_install_dir = /usr/local/lib
-vorbis_lib = $$vorbis_install_dir/libvorbis.dylib
+vorbis_install_dir = $$vorbis_dir/lib/.libs
+vorbis_lib = $$vorbis_install_dir/libvorbis.a
 win32{
    vorbis.commands = cd $$vorbis_dir && ./configure --with-ogg-libraries=/usr/local/lib --with-ogg-includes=/usr/local/include --disable-oggtest && make && make install 
 }
@@ -59,14 +59,13 @@ vorbis.target = $$vorbis_lib
 QMAKE_EXTRA_TARGETS += vorbis
 PRE_TARGETDEPS += $$vorbis_lib
 INCLUDEPATH += $$vorbis_dir/include
-# LIBS += $$vorbis_install_dir/libvorbisfile.a $$vorbis_lib $$vorbis_install_dir/libvorbisenc.a 
-LIBS += -L/usr/local/lib -lvorbisfile -lvorbis -lvorbisenc 
-QMAKE_DISTCLEAN += ; cd $$vorbis_dir ; make uninstall ; make distclean ; cd ../../../
+LIBS += $$vorbis_install_dir/libvorbisfile.a $$vorbis_lib $$vorbis_install_dir/libvorbisenc.a 
+QMAKE_DISTCLEAN += ; cd $$vorbis_dir ; sudo make uninstall ; make distclean ; cd ../../../
 
 
 # ogg library
 ogg_dir = app/vendors/libogg
-ogg_lib = /usr/local/lib/libogg.dylib
+ogg_lib = $$ogg_dir/src/.libs/libogg.a
 win32{
    ogg.commands = cd $$ogg_dir && ./configure && make && make install
 }
@@ -77,8 +76,8 @@ ogg.target = $$ogg_lib
 QMAKE_EXTRA_TARGETS += ogg
 PRE_TARGETDEPS += $$ogg_lib
 INCLUDEPATH += $$ogg_dir/include
-LIBS += -logg
-QMAKE_DISTCLEAN += ; cd $$ogg_dir ; make uninstall ; make distclean ; cd ../../../
+LIBS += $$ogg_lib
+QMAKE_DISTCLEAN += ; cd $$ogg_dir ; sudo make uninstall ; make distclean ; cd ../../../
 
 
 # GNU Science Library (only needed in win)
@@ -101,7 +100,7 @@ win32{
 ###############################################################################
 
 # Qmake and QT Config
-CONFIG += qt threaded c++11 debug
+CONFIG += qt threaded c++11 debug_and_release
 QT += core widgets webkit webkitwidgets
 TEMPLATE = app
 
@@ -147,12 +146,12 @@ POST_TARGETDEPS += $$RESOURCES_DIR/res
 QMAKE_DISTCLEAN += ; rm -rf $$DESTDIR/*
 
 # Deploy (create distributable binary)
-deploy.target = bin/$(QMAKE_TARGET)
 deploy.CONFIG = phony
 macx{
    QT_BIN_DIR = ~/Qt/5.2.1/clang_64/bin
-	deploy.commands = make distclean && qmake && make release && \
-      $$QT_BIN_DIR/macdeployqt bin/$(QMAKE_TARGET).app -dmg
+	deploy.commands = make distclean && $$QT_BIN_DIR/qmake && make release && \
+		$$QT_BIN_DIR/macdeployqt bin/$$QMAKE_TARGET.app -dmg
+	
 }
 win32{
    QT_BIN_DIR = /c/Qt/Qt5.2.1/5.2.1/mingw48_32/bin
@@ -214,7 +213,6 @@ win32{
 libpd_dir = "vendors/libpd"
 macx{
    libpd_lib = $$libpd_dir/build/Release/libpd-osx.a
-   # libpd_lib = $$libpd_dir/libs/libpd.dylib
    libpd.commands = cd $$libpd_dir && xcodebuild -project libpd.xcodeproj -target libpd-osx -configuration Release
 }
 win32{
