@@ -14,6 +14,7 @@ int extraSamplesCount = 0;
 int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames, double streamTime, RtAudioStreamStatus status, void *data){
    (void)streamTime;
 
+
    if (status!=0) {
       std::cerr << "Stream over/underflow detected." << std::endl;
    }

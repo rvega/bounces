@@ -115,7 +115,7 @@ void DBM::PdBridge::startAudio(QString inputDevice, int inputChannels, QString o
 
    QVariantMap params;
    params["sampleRate"] = QVariant(audio->getSampleRate());
-   params["inputCaannels"] = QVariant(audio->getInputChannels());
+   params["inputChannels"] = QVariant(audio->getInputChannels());
    params["outputChannels"] = QVariant(audio->getOutputChannels());
    params["mixingEnabled"] = QVariant(mixingEnabled);
    emit fireOKCallback(callbackId, params);
