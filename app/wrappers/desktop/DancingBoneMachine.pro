@@ -50,9 +50,11 @@ vorbis_install_dir = $$vorbis_dir/lib/.libs
 vorbis_lib = $$vorbis_install_dir/libvorbis.a
 win32{
    vorbis.commands = cd $$vorbis_dir && ./configure --with-ogg-libraries=/usr/local/lib --with-ogg-includes=/usr/local/include --disable-oggtest && make && make install 
+	QMAKE_DISTCLEAN += ; cd $$vorbis_dir ; make uninstall ; make distclean ; cd ../../../
 }
 macx{	
 	vorbis.commands = cd $$vorbis_dir && ./configure && make && sudo make install 
+	QMAKE_DISTCLEAN += ; cd $$vorbis_dir ; sudo make uninstall ; make distclean ; cd ../../../
 }
 vorbis.depends = ogg
 vorbis.target = $$vorbis_lib
@@ -60,7 +62,6 @@ QMAKE_EXTRA_TARGETS += vorbis
 PRE_TARGETDEPS += $$vorbis_lib
 INCLUDEPATH += $$vorbis_dir/include
 LIBS += $$vorbis_install_dir/libvorbisfile.a $$vorbis_lib $$vorbis_install_dir/libvorbisenc.a 
-QMAKE_DISTCLEAN += ; cd $$vorbis_dir ; sudo make uninstall ; make distclean ; cd ../../../
 
 
 # ogg library
@@ -68,16 +69,17 @@ ogg_dir = app/vendors/libogg
 ogg_lib = $$ogg_dir/src/.libs/libogg.a
 win32{
    ogg.commands = cd $$ogg_dir && ./configure && make && make install
+	QMAKE_DISTCLEAN += ; cd $$ogg_dir ; make uninstall ; make distclean ; cd ../../../
 }
 macx{
    ogg.commands = cd $$ogg_dir && ./configure && make && sudo make install
+	QMAKE_DISTCLEAN += ; cd $$ogg_dir ; sudo make uninstall ; make distclean ; cd ../../../
 }
 ogg.target = $$ogg_lib
 QMAKE_EXTRA_TARGETS += ogg
 PRE_TARGETDEPS += $$ogg_lib
 INCLUDEPATH += $$ogg_dir/include
 LIBS += $$ogg_lib
-QMAKE_DISTCLEAN += ; cd $$ogg_dir ; sudo make uninstall ; make distclean ; cd ../../../
 
 
 # GNU Science Library (only needed in win)
@@ -207,6 +209,11 @@ win32{
    INCLUDEPATH += vendors/rtaudio/include
    DEFINES += __WINDOWS_DS__ 
    DEFINES += __WINDOWS_ASIO__ 
+
+   # DEFINES += __WINDOWS_WASAPI__ 
+   # HEADERS += vendors/rtaudio/include/FunctionDiscoveryKeys_devpkey.h
+	# LIBS += -lksuser
+	# LIBS += -luuid
 }
 
 # LibPD Library

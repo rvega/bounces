@@ -166,6 +166,15 @@ button {
    height: auto;
 }
 
+#sound-devices{
+   max-width: 280px;
+}
+
+#sound-devices option{
+   /* width: 300px; */
+   /* font-size:8px; */
+}
+
 #configure-speakers-btn a{
    cursor: pointer;
 }

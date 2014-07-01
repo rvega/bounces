@@ -31,7 +31,8 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
 
       // Init PureData engine and load patch.
       PD.start({
-         patch:'sound-space-no-gui.pd'  
+         patch:'sound-space-no-gui.pd',
+         outChannels: 4
       },function(params){
          callback();
       }, function(err){
@@ -716,12 +717,12 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
             }
    
             var apiName = "";
-            if(device.api == "CORE") apiName="Core Audio";
-            else if(device.api == "DS") apiName="Direct Sound";
-            else if(device.api == "ASIO") apiName="Asio";
+            if(device.api == "CORE") apiName="";
+            else if(device.api == "DS") apiName="";
+            else if(device.api == "ASIO") apiName=" (Asio) ";
 
             var value = device.api + ":" + device.id; 
-            var string = device.name + " (" + apiName + ")"; 
+            var string = device.name + apiName; 
             var html = '<option value="'+ value +'">'+ string +'</option>';
             $('#sound-devices').append(html);
 

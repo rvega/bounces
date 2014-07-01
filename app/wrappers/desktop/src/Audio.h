@@ -18,15 +18,19 @@ namespace DBM{
          int start(QString inputDevice, int inputChannels, QString outputDevice, int outputChannels, int sampleRate);
          int stop();
 
+         unsigned int getBlockSize();
          unsigned int getSampleRate();
          unsigned int getInputChannels();
          unsigned int getOutputChannels();
 
+         bool sixtyFourDivisible;
+         unsigned int ticks;
+
       protected: 
+         unsigned int blockSize;
          unsigned int sampleRate;
          unsigned int inputChannels;
          unsigned int outputChannels;
-         unsigned int blockSize;
-         RtAudio rtaudio;
+         RtAudio* rtaudio;
    };
 };

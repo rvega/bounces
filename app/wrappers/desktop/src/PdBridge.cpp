@@ -35,6 +35,7 @@ void DBM::PdBridge::setPage(WebPage* page){
 
 void DBM::PdBridge::init(int inChannels, int outChannels, int sampleRate, int callbackId){
    if(!Audio::puredata.isInited()){
+      std::cout << "PD out channels:" << outChannels << std::endl;
       if(Audio::puredata.init(inChannels, outChannels, sampleRate)){
          if(!initedExternals){
             Externals::init();
