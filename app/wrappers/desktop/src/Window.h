@@ -36,6 +36,7 @@ namespace DBM{
 
       public slots:
          void connectToJS();
+         void linkClicked(QUrl);
    };
 };
 

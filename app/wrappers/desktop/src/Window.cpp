@@ -20,10 +20,12 @@
 
 #include <iostream>
 #include <QWebFrame>
+#include <QStandardPaths>
 #include <QApplication>
 #include <QMouseEvent>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QDesktopServices>
 #include "Window.h"
 #include "WebPage.h"
 
@@ -46,14 +48,18 @@ bridge(brdg)
    // A hack to fix radio buttons in windows.
    // https://bugreports.qt-project.org/browse/QTBUG-34163
    QApplication::setStyle( new PatchedWebViewStyle() );
+
    
    webView = new QWebView(window);
    webView->setAttribute(Qt::WA_AcceptTouchEvents, false);
    webView->setContextMenuPolicy(Qt::NoContextMenu);
 
    WebPage* page = new WebPage(webView);
-   page->settings()->setAttribute(QWebSettings::LocalStorageEnabled, true);
    webView->setPage(page);
+
+   // page->settings()->setAttribute(QWebSettings::LocalStorageEnabled, true);
+   // QWebSettings* settings = QWebSettings::globalSettings();
+   // settings->setAttribute(QWebSettings::LocalStorageEnabled, true);
 
    webView->page()->mainFrame()->setScrollBarPolicy( Qt::Vertical, Qt::ScrollBarAlwaysOff );
    webView->page()->mainFrame()->setScrollBarPolicy( Qt::Horizontal, Qt::ScrollBarAlwaysOff );
@@ -63,6 +69,9 @@ bridge(brdg)
    webView->resize(width, height);
    webView->load(QUrl(htmlFilePath));
 
+   webView->page()->setLinkDelegationPolicy(QWebPage::DelegateExternalLinks);
+   connect( webView->page(), SIGNAL(linkClicked(QUrl)), this, SLOT(linkClicked(QUrl)) );
+
    bridge->setPage(page);
 
    window->show();
@@ -71,6 +80,10 @@ bridge(brdg)
 
 DBM::Window::~Window(){
    delete window;
+}
+
+void DBM::Window::linkClicked(QUrl url){
+   QDesktopServices::openUrl(url);
 }
 
 /**

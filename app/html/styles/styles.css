@@ -45,6 +45,16 @@ h2{
    font-size: 16px;
 }
 
+h3{
+   font-size: 14px;
+   margin:10px 0px 0px 0px;
+}
+
+h4{
+   font-size: 12px;
+   margin:10px 0px -10px 0px;
+}
+
 #stage-container{
    float:left;
    border: 2px solid black;
@@ -108,6 +118,15 @@ h2{
 .reverb .knob{
    float:left;
    margin-right: 1px;
+   margin-left:15px;
+}
+
+#reverb_wet{
+   margin-left:23px;
+}
+
+#reverb_fspread, #reverb_spread{
+   display:none;
 }
 
 input[type=text]{
@@ -243,7 +262,7 @@ button {
 
 #credits-popup .content{
    background: #FFF;
-   width: 80%;
+   width: 65%;
    height:87%;
    margin: 20px auto;
    border-radius:5px;
@@ -252,15 +271,16 @@ button {
 }
 
 #credits-popup .scroll{
-   height: 90%;
+   height: 100%;
    overflow-y: auto;
 }
 
 #credits-popup .close{
    position: absolute;
-   top:15px;
-   right:15px;
+   top:7px;
+   right:7px;
    font-weight: bold;
    font-size: 16px;
    cursor: pointer;
 }
+

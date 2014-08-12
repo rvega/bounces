@@ -50,6 +50,12 @@ define(['./Listener', './Source', 'vendors/oss/knob/knob', 'vendors/oss/slider/s
    AppController.prototype.initCredits = function(){
       $('#open-credits-btn').on('click', this.openCredits.bind(this));
       $('#close-credits-btn').on('click', this.closeCredits.bind(this));
+
+      // Show credits the first time the app is run
+      DBMFile.readFile('~/.bounces', function(params){}, function(err){
+         this.openCredits();
+         DBMFile.writeFile('~/.bounces', '1');
+      }.bind(this));
    },
 
    AppController.prototype.openCredits = function(){

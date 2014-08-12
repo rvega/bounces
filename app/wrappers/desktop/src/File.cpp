@@ -27,6 +27,11 @@ void DBM::File::showDialog(QString caption, QString filter, bool openOrSave, int
 }
 
 void DBM::File::writeFile(QString path, QString data, int callbackId){
+   if(path[0]==QChar('~')){
+      path = QDir::homePath() + path.remove(0,1);
+      path = QDir::toNativeSeparators(path);
+   }
+
    QFile file(path);
    if(file.open(QFile::WriteOnly)){
       QTextStream out(&file);
@@ -42,6 +47,11 @@ void DBM::File::writeFile(QString path, QString data, int callbackId){
 }
 
 void DBM::File::readFile(QString path, int callbackId){
+   if(path[0]==QChar('~')){
+      path = QDir::homePath() + path.remove(0,1);
+      path = QDir::toNativeSeparators(path);
+   }
+
    // If relative path
    if(path[0] != QChar('/')){
       path = QApplication::applicationDirPath() + "/res/" + path;
